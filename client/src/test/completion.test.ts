@@ -24,7 +24,7 @@ suite('Should do completion', () => {
 	});
 });
 
-/*
+/*a
 	Function activates document using activate function, opens document in VSCode and waits for language server.
 	Simulates triggering completion and compares actual completion list with expected completion list.
 	@param docUri: Uri of the document to be tested
