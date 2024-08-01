@@ -18,8 +18,13 @@ export function run(): Promise<void> {
 	});
 	mocha.timeout(100000);
 
+	//	Current directory
 	const testsRoot = __dirname;
 
+	/*
+		Return Promise using glob to find all test files matching test.js in directory
+		Each file added to mocha instance then run tests
+	*/
 	return new Promise((resolve, reject) => {
 		glob('**.test.js', { cwd: testsRoot }, (err, files) => {
 			if (err) {
