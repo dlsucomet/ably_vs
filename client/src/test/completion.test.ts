@@ -7,6 +7,10 @@ import * as vscode from 'vscode';
 import * as assert from 'assert';
 import { getDocUri, activate } from './helper';
 
+/*
+	Test suite with test case "Completes JS/TS in txt file"
+	Asynch and uses testCompletion to perform checks
+*/
 suite('Should do completion', () => {
 	const docUri = getDocUri('completion.txt');
 
@@ -20,6 +24,13 @@ suite('Should do completion', () => {
 	});
 });
 
+/*a
+	Function activates document using activate function, opens document in VSCode and waits for language server.
+	Simulates triggering completion and compares actual completion list with expected completion list.
+	@param docUri: Uri of the document to be tested
+	@param position: Position in the document
+	@param expectedCompletionList: Expected completion list
+*/
 async function testCompletion(
 	docUri: vscode.Uri,
 	position: vscode.Position,
@@ -34,6 +45,10 @@ async function testCompletion(
 		position
 	)) as vscode.CompletionList;
 
+	/* 
+		Ensures at least two items in list to ensure completion is returning reasonable number of suggestions
+		Iterates over list and compares extepcted and actual.
+	*/
 	assert.ok(actualCompletionList.items.length >= 2);
 	expectedCompletionList.items.forEach((expectedItem, i) => {
 		const actualItem = actualCompletionList.items[i];
