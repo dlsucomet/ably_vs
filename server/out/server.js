@@ -110,6 +110,7 @@ async function validateTextDocument(textDocument) {
 	const text = textDocument.getText();
 
 	try {
+		// Uses the html-validator package to validate the HTML
         const result = await htmlValidator({
             data: text,
             format: 'json'
@@ -118,18 +119,21 @@ async function validateTextDocument(textDocument) {
         const diagnostics = [];
         let problems = 0;
 
+		// For each message, create a diagnostic
         result.messages.forEach((msg) => {
+			// If the number of problems exceeds the maxNumberOfProblems setting, stop
             if (problems >= settings.maxNumberOfProblems) {
                 return;
             }
 
             problems++;
 
+			// Create a diagnostic for the message, with the type of message determining the severity
             const diagnostic = {
                 severity: msg.type === 'error' ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
                 range: {
-                    start: textDocument.positionAt(msg.firstLine),
-                    end: textDocument.positionAt(msg.lastLine)
+                    start: {line: msg.lastLine - 1, character: msg.lastColumn - msg.hiliteLength},
+					end: {line: msg.lastLine - 1, character: msg.lastColumn}
                 },
                 message: msg.message,
                 source: 'html-validator'
