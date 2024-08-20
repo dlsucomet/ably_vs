@@ -101,7 +101,7 @@ class ColorsViewProvider {
     }
     _getHtmlForWebview(webview) {
         const score = receivedData.pop();
-        // console.log("SCORE: " + score);
+        console.log(receivedData);
         let messageArray = [];
         messageArray = receivedData.map(item => item.relatedInformation[0].message);
         let errorArray = [];
@@ -115,7 +115,7 @@ class ColorsViewProvider {
             const [, value] = item.split(" | ");
             return value;
         });
-        // console.log(extractedValues);
+        console.log(extractedValues);
         let finalArray = [];
         finalArray = receivedData.map((item, index) => {
             return `Line ${lineArray[index]}:  ${messageArray[index]}`;

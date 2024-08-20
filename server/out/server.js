@@ -203,7 +203,17 @@ async function validateTextDocument(textDocument) {
           end: {line: msg.lastLine - 1, character: msg.lastColumn}
         },
         message: msg.message,
-        source: 'html-validator'
+        source: 'html-validator',
+        relatedInformation: msg.extract ? [{
+          location: {
+            uri: textDocument.uri,
+            range: {
+              start: {line: msg.firstLine - 1, character: msg.firstColumn},
+              end: {line: msg.lastLine - 1, character: msg.lastColumn}
+            }
+          },
+          message: msg.extract
+        }] : undefined
       };
 
       diagnostics.push(diagnostic);
@@ -215,6 +225,11 @@ async function validateTextDocument(textDocument) {
     var files = diagnostics;
     const html = text;
     const score = countAttributes(html);
+
+    var files = diagnostics;
+    files.push(score);
+
+    connection.sendNotification("custom/loadFiles", [files]);
 
   } catch (error) {
 		connection.console.error(error);
@@ -1072,11 +1087,11 @@ async function validateTextDocument(textDocument) {
 
 
 
-  var files = diagnostics;
-  files.push(score);
+  // var files = diagnostics;
+  // files.push(score);
 
 
-  connection.sendNotification("custom/loadFiles", [files]);
+  // connection.sendNotification("custom/loadFiles", [files]);
 
 
 

@@ -159,7 +159,7 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
 
     private _getHtmlForWebview(webview: vscode.Webview) {
         const score = receivedData.pop();
-        // console.log("SCORE: " + score);
+        console.log(receivedData);
 
         let messageArray = [];
         messageArray = receivedData.map(item => item.relatedInformation[0].message);
@@ -177,7 +177,7 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
             const [, value] = item.split(" | ");
             return value;
         });
-        // console.log(extractedValues);
+        console.log(extractedValues);
 
         let finalArray = [];
         finalArray = receivedData.map((item, index) => {
