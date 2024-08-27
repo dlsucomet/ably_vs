@@ -1166,12 +1166,12 @@ async function validateTextDocument(textDocument) {
     }
 
     // If the extract is about an image, generate an alt text
-    if (diagnostic.relatedInformation.message.includes("Please add an 'alt' attribute to your image")) {
-      const extracted = msg.extract;
-      const imgTag = extracted.match(/<img[^>]*>/g)[0];
-      const src = imgTag.match(/src\s*=\s*['"`](.*?)['"`]/i)[1];
-      diagnostic.relatedInformation.message += `'${query(src)}'`;
-    }
+    // if (diagnostic.relatedInformation.message.includes("Please add an 'alt' attribute to your image")) {
+    //   const extracted = msg.extract;
+    //   const imgTag = extracted.match(/<img[^>]*>/g)[0];
+    //   const src = imgTag.match(/src\s*=\s*['"`](.*?)['"`]/i)[1];
+    //   diagnostic.relatedInformation.message += `'${query(src)}'`;
+    // }
 
     console.log(src);
 
@@ -1244,7 +1244,7 @@ async function query(filename) {
         "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large",
         {
             headers: {
-                Authorization: "Bearer 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",
+                Authorization: "Bearer hf_",
                 "Content-Type": "application/json",
             },
             method: "POST",
