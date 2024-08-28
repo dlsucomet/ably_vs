@@ -135,7 +135,7 @@ const WHATWGtoRule = [
 // W3C Dictionary for what WCAG rules are being checked
 const W3CtoRule = [
   {
-    ruleid: "An “img” element must have an “alt” attribute",
+    ruleid:`An “img” element must have an “alt” attribute`,
     wcag: "WCAG 2.1 | 1.1.1",
     errorMsg: "Image elements should have an alt attribute.",
     suggestMsg: `Please add an 'alt' attribute to your image element to ensure accessibility: <img src='...' alt=>`,
@@ -159,7 +159,7 @@ const W3CtoRule = [
     suggestMsg: "Please make sure all your attributes have different and unique IDs.",
   },
   {
-    ruleid: "Element “title” must not be empty.",
+    ruleid: `Element “title” must not be empty.`,
     wcag: "WCAG 2.1 | 2.4.2",
     errorMsg: "Element title cannot be empty, must have text content",
     suggestMsg: "Please add a descriptive title to your content.",
@@ -177,19 +177,19 @@ const W3CtoRule = [
     suggestMsg: "Please add a descriptive and concise title to your web page using the 'title' element within the 'head' section.",
   },
   {
-    ruleid: "Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.",
+    ruleid: `Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.`,
     wcag: "WCAG 2.1 | 3.1.1",
     errorMsg: "You must programatically define the primary language of each page.",
     suggestMsg: "Please add a lang attribute to the HTML tag and state the primary language.",
   },
   {
-    ruleid: "Element “area” is missing required attribute “alt”",
+    ruleid: `Element “area” is missing required attribute “alt”`,
     wcag: "WCAG 2.1 | 1.1.1",
     errorMsg: "'Area' elements should have an alt attribute.",
     suggestMsg: "Please add an 'alt' attribute to your area element to ensure accessibility.",
   },
   {
-    ruleid: "Element “area” is missing required attribute “href”",
+    ruleid: `Element “area” is missing required attribute “href”`,
     wcag: "WCAG 2.1 | 1.1.1",
     errorMsg: "'Area' elements should have an href attribute.",
     suggestMsg: "Make sure there is an 'href' present in your area element.",
@@ -225,13 +225,13 @@ const W3CtoRule = [
     suggestMsg: "Please check if your headings start at h1 and if it only increases one level at a time. (h1>h6)",
   },
   {
-    ruleid: "Element “area” is missing required attribute “alt”",
+    ruleid: `Element “area” is missing required attribute “alt”`,
     wcag: "WCAG 2.1 | 1.1.1",
     errorMsg: "'Area' elements should have an alt attribute.",
     suggestMsg: "Please add an 'alt' attribute to your area element to ensure accessibility.",
   },
   {
-    ruleid: "Element “area” is missing required attribute “href”",
+    ruleid: `Element “area” is missing required attribute “href”`,
     wcag: "WCAG 2.1 | 1.1.1",
     errorMsg: "'Area' elements should have an href attribute.",
     suggestMsg: "Make sure there is an 'href' present in your area element.",
@@ -426,69 +426,10 @@ async function validateTextDocument(textDocument) {
   const settings = await getDocumentSettings(textDocument.uri);
   const text = textDocument.getText();
 
-  // try {
-  //   // Uses the html-validator package to validate the HTML
-  //   const result = await htmlValidator({
-  //     data: text,
-  //     format: 'json'
-  //   });
-
-  //   const diagnostics = [];
-  //   let problems = 0;
-
-  //   // For each message, create a diagnostic
-  //   result.messages.forEach((msg) => {
-  //     // If the number of problems exceeds the maxNumberOfProblems setting, stop
-  //     if (problems >= settings.maxNumberOfProblems) {
-  //       return;
-  //     }
-
-  //     problems++;
-
-  //     // Create a diagnostic for the message, with the type of message determining the severity
-  //     const diagnostic = {
-  //       severity: msg.type === 'error' ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
-  //       range: {
-  //         start: {line: msg.lastLine - 1, character: msg.lastColumn - msg.hiliteLength},
-  //         end: {line: msg.lastLine - 1, character: msg.lastColumn}
-  //       },
-  //       message: msg.message,
-  //       source: 'html-validator',
-  //       relatedInformation: msg.extract ? [{
-  //         location: {
-  //           uri: textDocument.uri,
-  //           range: {
-  //             start: {line: msg.firstLine - 1, character: msg.firstColumn},
-  //             end: {line: msg.lastLine - 1, character: msg.lastColumn}
-  //           }
-  //         },
-  //         message: msg.extract
-  //       }] : undefined
-  //     };
-
-  //     diagnostics.push(diagnostic);
-      
-  //   });
-
-	// 	// Send the computed diagnostics to VS Code.
-	// 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-  //   var files = diagnostics;
-  //   const html = text;
-  //   const score = countAttributes(html);
-
-  //   var files = diagnostics;
-  //   files.push(score);
-
-  //   connection.sendNotification("custom/loadFiles", [files]);
-
-  // } catch (error) {
-	// 	connection.console.error(error);
-	// }
-
+  // These variables are there to store and tally the number of problems found in the HTML file
   let m;
   let problems = 0;
   const diagnostics = [];
-
 
   // 1.3.1 - Info and Relationships
   // nav landmark element should have a ul element (list)
@@ -1087,12 +1028,12 @@ async function validateTextDocument(textDocument) {
       severity: node_1.DiagnosticSeverity.Warning,
       range: {
         start: {
-          line: error.line,
-          character: error.column,
+          line: error.line - 1,
+          character: error.column - 1,
         },
         end: {
-          line: error.line,
-          character: error.column + error.length,
+          line: error.line - 1,
+          character: error.column - 1 + error.size,
         },
       },
       message: wcag.errorMsg,
@@ -1105,12 +1046,12 @@ async function validateTextDocument(textDocument) {
             uri: textDocument.uri,
             range: {
               start: {
-                line: error.line,
-                character: error.column,
+                line: error.line - 1,
+                character: error.column - 1,
               },
               end: {
-                line: error.line,
-                character: error.column + error.length,
+                line: error.line - 1,
+                character: error.column - 1 + error.size,
               },
             },
           },
@@ -1135,17 +1076,17 @@ async function validateTextDocument(textDocument) {
     }
     problems++;
 
-    const wcag = W3CtoRule.find((element) => element.ruleid.includes(msg.ruleId));
+    const wcag = W3CtoRule.find((element) => msg.message.includes(element.ruleid));
     if (wcag == undefined) {
       return;
     }
-    console.log(wcag);
+    // console.log(wcag);
 
     const diagnostic = {
       severity: node_1.DiagnosticSeverity.Warning,
       range: {
-        start: {line: msg.lastLine - 1, character: msg.lastColumn - msg.hiliteLength},
-        end: {line: msg.lastLine - 1, character: msg.lastColumn}
+        start: {line: msg.lastLine - 1, character: msg.firstColumn - 1 },
+        end: {line: msg.lastLine - 1, character: msg.lastColumn - 1}
       },
       message: wcag.errorMsg,
       source: wcag.wcag,
@@ -1156,8 +1097,8 @@ async function validateTextDocument(textDocument) {
           location: {
             uri: textDocument.uri,
             range: {
-              start: {line: msg.firstLine - 1, character: msg.firstColumn},
-              end: {line: msg.lastLine - 1, character: msg.lastColumn}
+              start: {line: msg.lastLine - 1, character: msg.firstColumn - 1 },
+              end: {line: msg.lastLine - 1, character: msg.lastColumn - 1}
             },
           },
           message: wcag.suggestMsg,
@@ -1173,7 +1114,7 @@ async function validateTextDocument(textDocument) {
     //   diagnostic.relatedInformation.message += `'${query(src)}'`;
     // }
 
-    console.log(src);
+    // console.log(src);
 
     diagnostics.push(diagnostic);
   });
@@ -1184,8 +1125,8 @@ async function validateTextDocument(textDocument) {
   const html = text;
   const score = countAttributes(html);
 
-//  console.log("SCORE");
-//  console.log(score); // Output: 14
+  //  console.log("SCORE");
+  //  console.log(score); // Output: 14
 
   var files = diagnostics;
   files.push(score);
