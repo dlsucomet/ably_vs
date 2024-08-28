@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
+require('dotenv').config();
 const node_1 = require("vscode-languageserver/node");
 const vscode_languageserver_textdocument_1 = require("vscode-languageserver-textdocument");
 const validator = require("@pamkirsten/html-validator");
@@ -1091,6 +1092,18 @@ async function validateTextDocument(textDocument) {
       message: wcag.errorMsg,
       source: wcag.wcag,
     };
+
+    // If the extract is about an image, generate an alt text
+    if (wcag.suggestMsg.includes("Please add an 'alt' attribute to your image")) {
+      const extracted = msg.extract;
+      if (extracted) {
+        const imgTag = extracted.match(/<img[^>]*>/g)[0];
+        const src = imgTag.match(/src\s*=\s*['"`](.*?)['"`]/i)[1];
+        wcag.suggestMsg += `'${query(src)}'`;
+        console.log(wcag.suggestMsg);
+      }
+    }
+
     if (hasDiagnosticRelatedInformationCapability) {
       diagnostic.relatedInformation = [
         {
@@ -1105,16 +1118,6 @@ async function validateTextDocument(textDocument) {
         },
       ];
     }
-
-    // If the extract is about an image, generate an alt text
-    // if (diagnostic.relatedInformation.message.includes("Please add an 'alt' attribute to your image")) {
-    //   const extracted = msg.extract;
-    //   const imgTag = extracted.match(/<img[^>]*>/g)[0];
-    //   const src = imgTag.match(/src\s*=\s*['"`](.*?)['"`]/i)[1];
-    //   diagnostic.relatedInformation.message += `'${query(src)}'`;
-    // }
-
-    // console.log(src);
 
     diagnostics.push(diagnostic);
   });
@@ -1185,7 +1188,7 @@ async function query(filename) {
         "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large",
         {
             headers: {
-                Authorization: "Bearer hf_",
+                Authorization: BLIP_TOKEN,
                 "Content-Type": "application/json",
             },
             method: "POST",
