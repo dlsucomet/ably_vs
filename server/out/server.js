@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-require('dotenv').config();
 const node_1 = require("vscode-languageserver/node");
 const vscode_languageserver_textdocument_1 = require("vscode-languageserver-textdocument");
 const validator = require("@pamkirsten/html-validator");
@@ -1070,58 +1069,9 @@ async function validateTextDocument(textDocument) {
   };
 
   const W3Cresult = await validator(W3C);
+  const diagnosticPromises = W3Cresult.messages.map((msg) => processDiagnostics(msg, diagnostics, problems, settings, textDocument));
+  await Promise.all(diagnosticPromises);
 
-  W3Cresult.messages.forEach((msg) => {
-    if (problems >= settings.maxNumberOfProblems) {
-      return;
-    }
-    problems++;
-
-    const wcag = W3CtoRule.find((element) => msg.message.includes(element.ruleid));
-    if (wcag == undefined) {
-      return;
-    }
-    // console.log(wcag);
-
-    const diagnostic = {
-      severity: node_1.DiagnosticSeverity.Warning,
-      range: {
-        start: {line: msg.lastLine - 1, character: msg.firstColumn - 1 },
-        end: {line: msg.lastLine - 1, character: msg.lastColumn - 1}
-      },
-      message: wcag.errorMsg,
-      source: wcag.wcag,
-    };
-
-    // If the extract is about an image, generate an alt text
-    if (wcag.suggestMsg.includes("Please add an 'alt' attribute to your image")) {
-      const extracted = msg.extract;
-      if (extracted) {
-        const imgTag = extracted.match(/<img[^>]*>/g)[0];
-        const src = imgTag.match(/src\s*=\s*['"`](.*?)['"`]/i)[1];
-        wcag.suggestMsg += `'${query(src)}'`;
-        console.log(wcag.suggestMsg);
-      }
-    }
-
-    if (hasDiagnosticRelatedInformationCapability) {
-      diagnostic.relatedInformation = [
-        {
-          location: {
-            uri: textDocument.uri,
-            range: {
-              start: {line: msg.lastLine - 1, character: msg.firstColumn - 1 },
-              end: {line: msg.lastLine - 1, character: msg.lastColumn - 1}
-            },
-          },
-          message: wcag.suggestMsg,
-        },
-      ];
-    }
-
-    diagnostics.push(diagnostic);
-  });
- 
   // Send the computed diagnostics to VSCode.
   connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
   var files = diagnostics;
@@ -1172,7 +1122,66 @@ connection.onCompletionResolve((item) => {
   return item;
 });
 
+async function processDiagnostics(msg, diagnostics, problems, settings, textDocument) {
+    if (problems >= settings.maxNumberOfProblems) {
+      return;
+    }
+    problems++;
 
+    const wcag = W3CtoRule.find((element) => msg.message.includes(element.ruleid));
+    if (wcag == undefined) {
+      return;
+    }
+     // console.log(wcag);
+
+    const diagnostic = {
+      severity: node_1.DiagnosticSeverity.Warning,
+      range: {
+        start: {line: msg.lastLine - 1, character: msg.firstColumn - 1 },
+        end: {line: msg.lastLine - 1, character: msg.lastColumn - 1}
+      },
+      message: wcag.errorMsg,
+      source: wcag.wcag,
+    };
+
+    // If the extract is about an image, generate an alt text
+    if (wcag.suggestMsg.includes("Please add an 'alt' attribute to your image")) {
+      const extracted = msg.extract;
+      if (extracted) {
+        const imgTag = extracted.match(/<img[^>]*>/g)[0];
+        const src = imgTag.match(/src\s*=\s*['"`](.*?)['"`]/i)[1];
+
+        try {
+          const altText = await query(src);
+          wcag.suggestMsg = `Please add an 'alt' attribute to your image element to ensure accessibility: <img src='${src}' alt='${altText}'>`;
+          // console.log(wcag.suggestMsg);
+        } catch (error) {
+          // console.error('Error fetching alt text:', error);
+        }
+      }
+    }
+
+    if (hasDiagnosticRelatedInformationCapability) {
+      diagnostic.relatedInformation = [
+        {
+          location: {
+            uri: textDocument.uri,
+            range: {
+              start: {line: msg.lastLine - 1, character: msg.firstColumn - 1 },
+              end: {line: msg.lastLine - 1, character: msg.lastColumn - 1}
+            },
+          },
+          message: wcag.suggestMsg,
+        },
+      ];
+    }
+    diagnostics.push(diagnostic);
+
+}
+
+// Import the env (must be in the same folder as the server.js file)
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const fs1 = require('fs'); // Import the promises API from the fs module
 
 // A function that generates an alt text for an image
@@ -1184,11 +1193,13 @@ async function query(filename) {
     } else {
       data = fs1.readFileSync(filename);
     }
+    const token = process.env.BLIP_TOKEN;
+    // console.log(token);
     const response = await fetch(
         "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large",
         {
             headers: {
-                Authorization: BLIP_TOKEN,
+                Authorization: token,
                 "Content-Type": "application/json",
             },
             method: "POST",
@@ -1216,7 +1227,7 @@ async function query(filename) {
   
     return alt_text;
   } catch (error) {
-    // If the url is imgur
+    // If the url is imgur (because it is bad practice to scrape imgur)
     if (filename.includes("imgur")) {
       return "Imgur is not supported.";
     }
