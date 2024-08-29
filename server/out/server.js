@@ -1220,7 +1220,8 @@ async function query(filename) {
     // Remove "arafed", "araffe", and "araf" parts
     alt_text = alt_text.replace("arafed ", ""); 
     alt_text = alt_text.replace("araffe ", "");
-    alt_text = alt_text.replace("araf ", "");
+    alt_text = alt_text.replace("araf ", "person");
+    alt_text = alt_text.replace("araffes ", "people ");
   
     // Capitalize the first character
     alt_text = alt_text.charAt(0).toUpperCase() + alt_text.slice(1);
