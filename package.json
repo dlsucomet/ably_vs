@@ -88,6 +88,8 @@
     "vscode": "^1.1.37"
   },
   "dependencies": {
-    "@pamkirsten/html-validator": "^6.0.1"
+    "@pamkirsten/html-validator": "^6.0.1",
+    "ABLY": "file:",
+    "dotenv": "^16.4.5"
   }
 }
