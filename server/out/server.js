@@ -1003,6 +1003,16 @@ async function validateTextDocument(textDocument) {
     diagnostics.push(diagnostic);
   }
 
+  // W3C Validator
+  const W3C = {
+    data: text,
+    format: "json",
+  };
+
+  const W3Cresult = await validator(W3C);
+  const diagnosticPromises = W3Cresult.messages.map((msg) => processDiagnostics(msg, diagnostics, problems, settings, textDocument));
+  await Promise.all(diagnosticPromises);
+
   // WHATWG Validator
   const WHATWG = {
     data: text,
@@ -1019,9 +1029,25 @@ async function validateTextDocument(textDocument) {
     problems++;
 
     const wcag = WHATWGtoRule.find((element) => element.ruleid == error.ruleId);
+    
+    // If the error is not in the list of WCAG rules, skip it
     if (wcag == undefined) {
       return;
     }
+    // console.log(`WHATWG: Line ${error.line} Column ${error.column}: ${wcag.errorMsg}`);
+    
+    // If a similar diagnostic has already been added, skip it
+    const isExisting = diagnostics.find((diag) =>
+      diag.range.start.line === (error.line - 1) &&
+      (diag.range.start.character - error.column) === -2 &&
+      diag.message === wcag.errorMsg
+    );
+    // console.log(isExisting);
+    if (isExisting) {
+      console.log(1)
+      return
+    }
+
     // console.log(wcag);
     
     const diagnostic = {
@@ -1061,16 +1087,6 @@ async function validateTextDocument(textDocument) {
     }
     diagnostics.push(diagnostic);
   });
-
-  // W3C Validator
-  const W3C = {
-    data: text,
-    format: "json",
-  };
-
-  const W3Cresult = await validator(W3C);
-  const diagnosticPromises = W3Cresult.messages.map((msg) => processDiagnostics(msg, diagnostics, problems, settings, textDocument));
-  await Promise.all(diagnosticPromises);
 
   // Send the computed diagnostics to VSCode.
   connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
@@ -1143,6 +1159,7 @@ async function processDiagnostics(msg, diagnostics, problems, settings, textDocu
       message: wcag.errorMsg,
       source: wcag.wcag,
     };
+    // console.log(`W3C: Line ${diagnostic.range.start.line} Column ${diagnostic.range.start.character}: ${diagnostic.message}`);
 
     // If the extract is about an image, generate an alt text
     if (wcag.suggestMsg.includes("Please add an 'alt' attribute to your image")) {
