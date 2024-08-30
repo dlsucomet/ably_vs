@@ -418,9 +418,6 @@ documents.onDidSave((change) => {
   validateTextDocument(change.document);
 });
 
-const htmlValidator = require('html-validator');
-const { DiagnosticSeverity } = require('vscode-languageserver');
-
 async function validateTextDocument(textDocument) {
   // In this simple example we get the settings for every validate run.
   const settings = await getDocumentSettings(textDocument.uri);
@@ -1044,7 +1041,6 @@ async function validateTextDocument(textDocument) {
     );
     // console.log(isExisting);
     if (isExisting) {
-      console.log(1)
       return
     }
 
@@ -1170,7 +1166,7 @@ async function processDiagnostics(msg, diagnostics, problems, settings, textDocu
 
         try {
           const altText = await query(src);
-          wcag.suggestMsg = `Please add an 'alt' attribute to your image element to ensure accessibility: <img src='${src}' alt='${altText}'>`;
+          wcag.suggestMsg = `Please add an 'alt' attribute to your image element to ensure accessibility${altText}`;
           // console.log(wcag.suggestMsg);
         } catch (error) {
           // console.error('Error fetching alt text:', error);
@@ -1245,16 +1241,10 @@ async function query(filename) {
     // Capitalize the first character
     alt_text = alt_text.charAt(0).toUpperCase() + alt_text.slice(1);
   
-    return alt_text;
+    return `: <img src='${filename}' alt='${alt_text}'></img>`;
   } catch (error) {
-    // If the url is imgur (because it is bad practice to scrape imgur)
-    if (filename.includes("imgur")) {
-      return "Imgur is not supported.";
-    }
-    else {
-      const alt_text = filename.split('.')[0];
-      return alt_text;
-    }
+    // If the image is not supported
+    return `. Unfortunately, we cannot recommend an alt-text for this image.`
   }
 }
 
