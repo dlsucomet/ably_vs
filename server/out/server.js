@@ -1087,20 +1087,20 @@ async function validateTextDocument(textDocument) {
 
   // Color Contrast
   const contrastIssues = checkDocumentContrast(textDocument._content);
-  console.log(contrastIssues);
-  // contrastIssues.forEach((issue) => {
-  //   const diagnostic = {
-  //     severity: node_1.DiagnosticSeverity.Warning,
-  //     range: {
-  //       start: textDocument.positionAt(issue.index),
-  //       end: textDocument.positionAt(issue.index + issue.length),
-  //     },
-  //     message: issue.message,
-  //     source: "contrast"
-  //   };
-  //   console.log(diagnostic);
-  //   diagnostics.push(diagnostic);
-  // });
+  // console.log(contrastIssues);
+  contrastIssues.forEach((issue) => {
+    const diagnostic = {
+      severity: node_1.DiagnosticSeverity.Warning,
+      range: {
+        start: textDocument.positionAt(issue.start),
+        end: textDocument.positionAt(issue.end),
+      },
+      message: issue.contrastIssue,
+      source: "WCAG 2.1 | 1.4.3, 1.4.6"
+    };
+    // console.log(diagnostic);
+    diagnostics.push(diagnostic);
+  });
 
   // Send the computed diagnostics to VSCode.
   connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });

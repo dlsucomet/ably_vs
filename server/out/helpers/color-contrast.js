@@ -190,15 +190,15 @@ const defaultBackgroundColor = "#ffffff"; // White
     const documentHTML = document.documentElement.outerHTML;
     // Find the index of the element's HTML within the document's HTML
     const elementStartIndex = documentHTML.indexOf(elementHTML);
-    const elementEndIndex = elementStartIndex + elementHTML.length;
+    const elementEndIndex = elementStartIndex + element.textContent.length;
     // console.log("Element start index in HTML document:", elementStartIndex);
     // console.log("Element end index in HTML document:", elementEndIndex);
 
     // Only return the element if it has a color contrast issue
 	  return {
       contrastIssue: contrastIssue,
-      start: elementStartIndex,
-      end: elementEndIndex         
+      start: elementStartIndex + 1,
+      end: elementEndIndex + 1         
     };
 }
   
