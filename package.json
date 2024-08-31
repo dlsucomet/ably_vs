@@ -90,6 +90,8 @@
   "dependencies": {
     "@pamkirsten/html-validator": "^6.0.1",
     "ABLY": "file:",
-    "dotenv": "^16.4.5"
+    "color-contrast-checker": "^2.1.0",
+    "dotenv": "^16.4.5",
+    "jsdom": "^25.0.0"
   }
 }
