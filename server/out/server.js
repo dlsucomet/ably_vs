@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_1 = require("vscode-languageserver/node");
 const vscode_languageserver_textdocument_1 = require("vscode-languageserver-textdocument");
 const validator = require("@pamkirsten/html-validator");
+const { checkDocumentContrast } = require("./helpers/color-contrast");
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = (0, node_1.createConnection)(node_1.ProposedFeatures.all);
@@ -1083,6 +1084,23 @@ async function validateTextDocument(textDocument) {
     }
     diagnostics.push(diagnostic);
   });
+
+  // Color Contrast
+  const contrastIssues = checkDocumentContrast(textDocument._content);
+  console.log(contrastIssues);
+  // contrastIssues.forEach((issue) => {
+  //   const diagnostic = {
+  //     severity: node_1.DiagnosticSeverity.Warning,
+  //     range: {
+  //       start: textDocument.positionAt(issue.index),
+  //       end: textDocument.positionAt(issue.index + issue.length),
+  //     },
+  //     message: issue.message,
+  //     source: "contrast"
+  //   };
+  //   console.log(diagnostic);
+  //   diagnostics.push(diagnostic);
+  // });
 
   // Send the computed diagnostics to VSCode.
   connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
