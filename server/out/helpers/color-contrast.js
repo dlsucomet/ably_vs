@@ -137,7 +137,7 @@ const defaultBackgroundColor = "#ffffff"; // White
     }
   }
   
-  function checkContrast(element, window, document) {
+  function checkContrast(element, window, document, html) {
 	  let contrastIssue = "";
     // console.log("Checking contrast for element:", element.className);
     // Get the text and background colors of an element
@@ -184,22 +184,29 @@ const defaultBackgroundColor = "#ffffff"; // White
       }
     }
 
-    // Get the outerHTML of the element
-    const elementHTML = element.outerHTML;
-    // Get the outerHTML of the entire document
-    const documentHTML = document.documentElement.outerHTML;
+    // TODO: Fix the position to not be just plain-text search (vulnerable to duplicates)
+
     // Find the index of the element's HTML within the document's HTML
-    const elementStartIndex = documentHTML.indexOf(elementHTML);
+    const elementStartIndex = html.indexOf(element.textContent);
     const elementEndIndex = elementStartIndex + element.textContent.length;
     // console.log("Element start index in HTML document:", elementStartIndex);
     // console.log("Element end index in HTML document:", elementEndIndex);
 
     // Only return the element if it has a color contrast issue
-	  return {
-      contrastIssue: contrastIssue,
-      start: elementStartIndex + 1,
-      end: elementEndIndex + 1         
-    };
+    // console.log(elementStartIndex)
+    if (elementStartIndex < 1 || elementEndIndex < 1) {
+      return {
+        contrastIssue: "",
+        start: -1,
+        end: -1
+      };
+    } else {
+      return {
+        contrastIssue: contrastIssue,
+        start: elementStartIndex + 1,
+        end: elementEndIndex         
+      };
+    }
 }
   
 
@@ -223,7 +230,7 @@ function checkDocumentContrast(html) {
 	// });
 	
 	// Check the color contrast of each element
-	elements.forEach(element => colorContrastIssues.push(checkContrast(element, window, document)));
+	elements.forEach(element => colorContrastIssues.push(checkContrast(element, window, document, html)));
 
   // Remove element if there is no contrast issue
   for (let i = colorContrastIssues.length - 1; i >= 0; i--) {
