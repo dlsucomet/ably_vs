@@ -48,11 +48,8 @@ async function activate(context) {
         client.onNotification("custom/loadFiles", (files) => {
             //console.log("loading files " + JSON.stringify(files));
             // console.log(files);
-            receivedData = files[0];
+            receivedData = files;
             // console.log(receivedData);
-            //const score = receivedData.pop();
-            // console.log(receivedData);
-            //console.log("SCORE "+score); // Output: 3
             if (done != 2) {
                 context.subscriptions.push(vscode.window.registerWebviewViewProvider(ColorsViewProvider.viewType, provider));
             }
@@ -62,10 +59,8 @@ async function activate(context) {
     });
 }
 exports.activate = activate;
+let score = 0;
 let dataLength = 0;
-const TotalScore = 0;
-const scorePercent = 0;
-const tryArray = [];
 class ColorsViewProvider {
     constructor(_extensionUri) {
         this._extensionUri = _extensionUri;
@@ -100,39 +95,41 @@ class ColorsViewProvider {
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
     }
     _getHtmlForWebview(webview) {
-        const score = receivedData.pop();
-       //  console.log(receivedData);
-        let messageArray = [];
-        messageArray = receivedData.map(item => item.relatedInformation[0].message);
-        let errorArray = [];
-        errorArray = receivedData.map(item => item.message);
-        let lineArray = [];
-        lineArray = receivedData.map(item => item.range.start.line + 1);
-        let wcagArray = [];
-        wcagArray = (receivedData.map(item => item.source));
-        let extractedValues = [];
-        extractedValues = wcagArray.map(item => {
-            const [, value] = item.split(" | ");
-            return value;
-        });
-        // console.log(extractedValues);
-        let finalArray = [];
-        finalArray = receivedData.map((item, index) => {
-            return `Line ${lineArray[index]}:  ${messageArray[index]}`;
-        });
-        /**finalArray.sort((a, b) => {
-            const lineA = a.match(/Line (\d+)/)[1];
-            const lineB = b.match(/Line (\d+)/)[1];
-            return lineA - lineB;
-        });**/
-        let stringArray = "";
-        stringArray = finalArray.join(' + ');
-        let guidelinesString = "";
-        guidelinesString = extractedValues.join(' + ');
-        // console.log(stringArray);
-        dataLength = receivedData.length;
-        //console.log(receivedData); 
-        return `
+        try {
+            score = receivedData.pop();
+            // console.log(receivedData);
+            let messageArray = [];
+            messageArray = receivedData.map(item => item.relatedInformation[0].message);
+            let errorArray = [];
+            errorArray = receivedData.map(item => item.message);
+            let lineArray = [];
+            lineArray = receivedData.map(item => item.range.start.line + 1);
+            let wcagArray = [];
+            wcagArray = (receivedData.map(item => item.source));
+            let extractedValues = [];
+            extractedValues = wcagArray.map(item => {
+                const [, value] = item.split(" | ");
+                return value;
+            });
+            // console.log(extractedValues);
+            let finalArray = [];
+            finalArray = receivedData.map((item, index) => {
+                return `Line ${lineArray[index]}:  ${messageArray[index]}`;
+            });
+            /**finalArray.sort((a, b) => {
+                const lineA = a.match(/Line (\d+)/)[1];
+                const lineB = b.match(/Line (\d+)/)[1];
+                return lineA - lineB;
+            });**/
+            let stringArray = "";
+            stringArray = finalArray.join(' + ');
+            let guidelinesString = "";
+            guidelinesString = extractedValues.join(' + ');
+            //  console.log(stringArray);
+            dataLength = receivedData.length;
+            console.log(`Score: ${score}/ ${dataLength}`);
+            //console.log(receivedData);
+            return `
 		<!DOCTYPE html>
 <html>
 
@@ -540,21 +537,15 @@ class ColorsViewProvider {
         <p id="demo"></p> -->
 
     </div>
-
-
-    </div>
-
-
-
     <script>
         // Total of Errors
-        let ErrorTotal = ${dataLength};
+        let ErrorTotal = ${score};
 
         // Total of Elements and their Scoring
-        let totalScore = ${score};
+        let totalScore = ${dataLength};
 
         // Final Score Percentage
-        let scorePercent = 100 - Math.round((ErrorTotal / totalScore) * 100);
+        let scorePercent = 100.00 - Math.round((ErrorTotal / totalScore) * 100);
         if (scorePercent < 0) {
         scorePercent = 0;
         }
@@ -584,7 +575,7 @@ class ColorsViewProvider {
 
         var newArray = [];
 
-        let guideString ='${guidelinesString}';
+        let guideString ='${guidelinesString};'
         const guideArray = guideString.split(' + ');
 
         let newString = '${stringArray}'; 
@@ -773,6 +764,10 @@ class ColorsViewProvider {
 </body>
 </html>
 `;
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 }
 ColorsViewProvider.viewType = 'calicoColors.colorsView';

@@ -71,14 +71,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
         client.onNotification("custom/loadFiles", (files: Array<string>) => {
             //console.log("loading files " + JSON.stringify(files));
-           // console.log(files);
-            receivedData = files[0];
+            // console.log(files);
+            receivedData = files;
             // console.log(receivedData);
-
-            //const score = receivedData.pop();
-           // console.log(receivedData);
-
-            //console.log("SCORE "+score); // Output: 3
 
             
             if (done != 2) {
@@ -98,11 +93,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
 
 }
-let dataLength = 0;
-const TotalScore = 0; 
-const scorePercent = 0;
-const tryArray = [];
 
+let score = 0;
+let dataLength = 0;
 
 class ColorsViewProvider implements vscode.WebviewViewProvider {
 
@@ -158,48 +151,49 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
     }
 
     private _getHtmlForWebview(webview: vscode.Webview) {
-        const score = receivedData.pop();
-        console.log(receivedData);
+        try {
+            score = receivedData.pop();
+            // console.log(receivedData);
 
-        let messageArray = [];
-        messageArray = receivedData.map(item => item.relatedInformation[0].message);
-        let errorArray = [];
-        errorArray = receivedData.map(item => item.message);
-        let lineArray = [];
+            let messageArray = [];
+            messageArray = receivedData.map(item => item.relatedInformation[0].message);
+            let errorArray = [];
+            errorArray = receivedData.map(item => item.message);
+            let lineArray = [];
 
-        lineArray = receivedData.map(item => item.range.start.line + 1);
+            lineArray = receivedData.map(item => item.range.start.line + 1);
 
-        let wcagArray = [];
-        wcagArray = (receivedData.map(item => item.source));
+            let wcagArray = [];
+            wcagArray = (receivedData.map(item => item.source));
 
-        let extractedValues = [];
-        extractedValues = wcagArray.map(item => {
-            const [, value] = item.split(" | ");
-            return value;
-        });
-        // console.log(extractedValues);
+            let extractedValues = [];
+            extractedValues = wcagArray.map(item => {
+                const [, value] = item.split(" | ");
+                return value;
+            });
+            // console.log(extractedValues);
 
-        let finalArray = [];
-        finalArray = receivedData.map((item, index) => {
-            return `Line ${lineArray[index]}:  ${messageArray[index]}`;
-        });
+            let finalArray = [];
+            finalArray = receivedData.map((item, index) => {
+                return `Line ${lineArray[index]}:  ${messageArray[index]}`;
+            });
 
-        /**finalArray.sort((a, b) => {
-            const lineA = a.match(/Line (\d+)/)[1];
-            const lineB = b.match(/Line (\d+)/)[1];
-            return lineA - lineB;
-        });**/
+            /**finalArray.sort((a, b) => {
+                const lineA = a.match(/Line (\d+)/)[1];
+                const lineB = b.match(/Line (\d+)/)[1];
+                return lineA - lineB;
+            });**/
 
-        let stringArray = "";
-        stringArray = finalArray.join(' + ');
-        let guidelinesString = "";
-        guidelinesString = extractedValues.join(' + ');
+            let stringArray = "";
+            stringArray = finalArray.join(' + ');
+            let guidelinesString = "";
+            guidelinesString = extractedValues.join(' + ');
 
-        
-        // console.log(stringArray);
-        dataLength = receivedData.length;
-    
-        //console.log(receivedData); 
+            
+        //  console.log(stringArray);
+            dataLength = receivedData.length;
+            console.log(`Score: ${score}/ ${dataLength}`);
+            //console.log(receivedData);
 
         return `
 		<!DOCTYPE html>
@@ -609,21 +603,15 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
         <p id="demo"></p> -->
 
     </div>
-
-
-    </div>
-
-
-
     <script>
         // Total of Errors
-        let ErrorTotal = ${dataLength};
+        let ErrorTotal = ${score};
 
         // Total of Elements and their Scoring
-        let totalScore = ${score};
+        let totalScore = ${dataLength};
 
         // Final Score Percentage
-        let scorePercent = 100 - Math.round((ErrorTotal / totalScore) * 100);
+        let scorePercent = 100.00 - Math.round((ErrorTotal / totalScore) * 100);
         if (scorePercent < 0) {
         scorePercent = 0;
         }
@@ -653,7 +641,7 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
 
         var newArray = [];
 
-        let guideString ='${guidelinesString}';
+        let guideString ='${guidelinesString};'
         const guideArray = guideString.split(' + ');
 
         let newString = '${stringArray}'; 
@@ -842,6 +830,9 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
 </body>
 </html>
 `;
+} catch (error) {
+    console.log(error);
+}
     }
 }
 
