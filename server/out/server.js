@@ -1095,6 +1095,18 @@ async function validateTextDocument(textDocument) {
         start: textDocument.positionAt(issue.start),
         end: textDocument.positionAt(issue.end),
       },
+      relatedInformation: [
+        {
+          location: {
+            uri: textDocument.uri,
+            range: {
+              start: textDocument.positionAt(issue.start),
+              end: textDocument.positionAt(issue.end),
+            },
+          },
+          message: "Please increase the color contrast of the elements.",
+        },
+      ],
       message: issue.contrastIssue,
       source: "WCAG 2.1 | 1.4.3, 1.4.6"
     };
@@ -1113,8 +1125,7 @@ async function validateTextDocument(textDocument) {
 
   var files = diagnostics;
   files.push(score);
-
-  connection.sendNotification("custom/loadFiles", [files]);
+  connection.sendNotification("custom/loadFiles", files);
 }
 
 connection.onDidChangeWatchedFiles((_change) => {
