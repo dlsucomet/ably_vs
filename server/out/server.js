@@ -661,7 +661,7 @@ async function validateTextDocument(textDocument) {
             range: Object.assign({}, diagnostic.range),
           },
           message:
-            "Remove this from its style. Use the appropriate HTML tag instead of &lt;span&gt;&lt;/span&gt;.",
+            "Remove this from its style. Use the appropriate HTML tag instead of <span></span>.",
         },
       ];
     }
@@ -721,7 +721,7 @@ async function validateTextDocument(textDocument) {
             uri: textDocument.uri,
             range: Object.assign({}, diagnostic.range),
           },
-          message: 'Please add a `name` attribute (ex: &lt;input name=""/&gt;)',
+          message: "Please add a 'name' attribute (ex: <input name=''/>)",
         },
       ];
     }
@@ -808,7 +808,7 @@ async function validateTextDocument(textDocument) {
             uri: textDocument.uri,
             range: Object.assign({}, diagnostic.range),
           },
-          message: "Please change this to &lt;button&gt;&lt;/button&gt;",
+          message: "Please change this to <button></button>",
         },
         {
           location: {
@@ -816,7 +816,7 @@ async function validateTextDocument(textDocument) {
             range: Object.assign({}, diagnostic.range),
           },
           message:
-            'Please change the `class` attribute to `role` and add `tabindex="0"` (ex: &lt;div role="button" tabindex="0"&gt;&lt;/div&gt;)',
+            'Please change the `class` attribute to `role` and add `tabindex="0"` (ex: <div role="button" tabindex="0"></div>)',
         },
       ];
     }

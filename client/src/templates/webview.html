@@ -136,9 +136,13 @@
         var newArray = [];
 
         let guideString = "{{guidelinesString}}";
+		// Remove the brackets from the string
+		guideString = guideString.substring(1, guideString.length - 1);
         const guideArray = guideString.split(' + ');
 
         let newString = "{{stringArray}}"; 
+		// Remove the brackets from the string
+		newString = newString.substring(1, newString.length - 1);
 		const backToArray = newString.split(' + ');
 
         let onetext = "";
@@ -232,6 +236,7 @@
 
 
         function addError(item, index) {
+			// console.log(item, index, guideArray[index]);
             const link = getLink(guideArray[index]);
 
 
