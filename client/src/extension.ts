@@ -207,7 +207,7 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
                 .replace('{{styles}}', `<style>${cssContent}</style>`);
 
             // console.log(htmlContent);
-            openHtmlInBrowser(htmlContent);
+            // openHtmlInBrowser(htmlContent);
 
             return htmlContent;
        
@@ -217,16 +217,16 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
     }
 }
 
-import * as os from 'os';
-import { exec } from 'child_process';
+// import * as os from 'os';
+// import { exec } from 'child_process';
 
-function openHtmlInBrowser(htmlContent: string): void {
-    const tempFilePath = path.join(os.tmpdir(), 'temp.html');
-    fs.writeFileSync(tempFilePath, htmlContent, 'utf8');
+// function openHtmlInBrowser(htmlContent: string): void {
+//     const tempFilePath = path.join(os.tmpdir(), 'temp.html');
+//     fs.writeFileSync(tempFilePath, htmlContent, 'utf8');
 
-    // Open the file in the default web browser
-    exec(`start ${tempFilePath}`);
-}
+//     // Open the file in the default web browser
+//     exec(`start ${tempFilePath}`);
+// }
 
 
 export function deactivate(): Thenable<void> | undefined {

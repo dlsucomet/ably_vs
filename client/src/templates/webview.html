@@ -145,6 +145,11 @@
 		newString = newString.substring(1, newString.length - 1);
 		const backToArray = newString.split(' + ');
 
+		// Replace special characters with their respective HTML entities
+		backToArray.forEach((item, index) => {
+			backToArray[index] = item.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		});
+
         let onetext = "";
         let twotext = "";
         let threetext = "";
