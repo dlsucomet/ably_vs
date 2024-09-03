@@ -125,10 +125,6 @@
             scoreCircle.style.backgroundColor = '#FF1E0E'; 
         }
 
-        
-
-        console.log(scorePercent);
-
         // Get the ably score element
         var ablyScore = document.querySelector('.ably-score-value');
 
@@ -144,7 +140,6 @@
 
         let newString = "{{stringArray}}"; 
 		const backToArray = newString.split(' + ');
-        console.log(backToArray)
 
         let onetext = "";
         let twotext = "";
@@ -237,7 +232,6 @@
 
 
         function addError(item, index) {
-			//console.log("guide array = " + guideArray[index] + " item = " + item);
             const link = getLink(guideArray[index]);
 
 

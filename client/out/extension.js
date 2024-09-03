@@ -117,19 +117,15 @@ class ColorsViewProvider {
             finalArray = receivedData.map((item, index) => {
                 return `Line ${lineArray[index]}:  ${messageArray[index]}`;
             });
-            /**finalArray.sort((a, b) => {
-                const lineA = a.match(/Line (\d+)/)[1];
-                const lineB = b.match(/Line (\d+)/)[1];
-                return lineA - lineB;
-            });**/
+            // console.log(finalArray);
             let stringArray = "";
             stringArray = finalArray.join(' + ');
             let guidelinesString = "";
             guidelinesString = extractedValues.join(' + ');
-            //  console.log(stringArray);
+            // console.log(stringArray);
+            // console.log(guidelinesString);
             dataLength = receivedData.length;
-            console.log(`Score: ${score}/ ${dataLength}`);
-            //console.log(receivedData);
+            // console.log(`Score: ${dataLength}/ ${score}`);
             const htmlFilePath = path.join(__dirname, '..', 'src', 'templates', 'webview.html');
             // console.log(htmlFilePath);
             let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');

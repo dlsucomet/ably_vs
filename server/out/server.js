@@ -29,13 +29,13 @@ const WHATWGtoRule = [
   },
   { 
     ruleid: "aria-hidden-body", 
-    wcag: "WCAG 2.2",
+    wcag: "WCAG 2.2 | 1.3.1",
     errorMsg: "aria-hidden must not be used on <body>",
     suggestMsg: "Please do not use aria-hidden attribute in the <body> element",
   },
   { 
     ruleid: "aria-label-misuse", 
-    wcag: "WCAG 2.2",
+    wcag: "WCAG 2.2 | 4.1.2",
     errorMsg: "'aria-label' cannot be used on this element",
     suggestMsg: "Please do not use aria-label on this element"
   },
@@ -53,12 +53,12 @@ const WHATWGtoRule = [
   },
   { 
     ruleid: "hidden-focusable", 
-    wcag: "WCAG 2.2",
+    wcag: "WCAG 2.2 | 2.4.3, 4.1.2",
     errorMsg: "aria-hidden cannot be used on focusable elements",
     suggestMsg: "Please remove aria-hidden or remove the element"
   },
   { ruleid: "input-missing-label", 
-    wcag: "WCAG 2.2",
+    wcag: "WCAG 2.2 | 1.1.1",
     errorMsg: "Input is missing a label",
     suggestMsg: "Please add a label attribute to your input."
   },
@@ -69,13 +69,13 @@ const WHATWGtoRule = [
   },
   { 
     ruleid: "multiple-labeled-controls", 
-    wcag: "WCAG 2.2",
+    wcag: "WCAG 2.2 | 1.3.1, 4.1.2",
     errorMsg: "Label must not be associated with multiple controls.",
     suggestMsg: "Please make sure that each label is associated with only one control.",
   },
   { 
     ruleid: "no-autoplay", 
-    wcag: "WCAG 2.2",
+    wcag: "WCAG 2.2 | 1.4.2, 2.2.2",
     errorMsg: "Autoplay should not be used as it can be disruptive to users.",
     suggestMsg: "Please remove the autoplay attribute from your media element.",
   },
