@@ -1114,6 +1114,27 @@ async function validateTextDocument(textDocument) {
     diagnostics.push(diagnostic);
   });
 
+  // Sort the diagnostics by start's line number > column number > end's line number > column number > source
+  diagnostics.sort((a, b) => {
+    if (a.range.start.line === b.range.start.line) {
+      if (a.range.start.character === b.range.start.character) {
+        if (a.range.end.line === b.range.end.line) {
+          if (a.range.end.character === b.range.end.character) {
+            return a.source.localeCompare(b.source);
+          } else {
+            return a.range.end.character - b.range.end.character;
+          }
+        } else {
+          return a.range.end.line - b.range.end.line;
+        }
+      } else {
+        return a.range.start.character - b.range.start.character;
+      }
+    } else {
+      return a.range.start.line - b.range.start.line;
+    }
+  });
+
   // Send the computed diagnostics to VSCode.
   connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
   var files = diagnostics;
