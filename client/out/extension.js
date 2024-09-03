@@ -98,7 +98,7 @@ class ColorsViewProvider {
     _getHtmlForWebview(webview) {
         try {
             score = receivedData.pop();
-            // console.log(receivedData);
+            console.log(receivedData);
             let messageArray = [];
             messageArray = receivedData.map(item => item.relatedInformation[0].message);
             let errorArray = [];
@@ -141,6 +141,7 @@ class ColorsViewProvider {
                 .replace('{{stringArray}}', stringArray)
                 .replace('{{styles}}', `<style>${cssContent}</style>`);
             // console.log(htmlContent);
+            openHtmlInBrowser(htmlContent);
             return htmlContent;
         }
         catch (error) {
@@ -149,6 +150,14 @@ class ColorsViewProvider {
     }
 }
 ColorsViewProvider.viewType = 'calicoColors.colorsView';
+const os = require("os");
+const child_process_1 = require("child_process");
+function openHtmlInBrowser(htmlContent) {
+    const tempFilePath = path.join(os.tmpdir(), 'temp.html');
+    fs.writeFileSync(tempFilePath, htmlContent, 'utf8');
+    // Open the file in the default web browser
+    (0, child_process_1.exec)(`start ${tempFilePath}`);
+}
 function deactivate() {
     if (!client) {
         return undefined;

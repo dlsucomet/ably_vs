@@ -153,7 +153,7 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
     private _getHtmlForWebview(webview: vscode.Webview) {
         try {
             score = receivedData.pop();
-            // console.log(receivedData);
+            console.log(receivedData);
 
             let messageArray = [];
             messageArray = receivedData.map(item => item.relatedInformation[0].message);
@@ -207,6 +207,7 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
                 .replace('{{styles}}', `<style>${cssContent}</style>`);
 
             // console.log(htmlContent);
+            openHtmlInBrowser(htmlContent);
 
             return htmlContent;
        
@@ -216,6 +217,16 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
     }
 }
 
+import * as os from 'os';
+import { exec } from 'child_process';
+
+function openHtmlInBrowser(htmlContent: string): void {
+    const tempFilePath = path.join(os.tmpdir(), 'temp.html');
+    fs.writeFileSync(tempFilePath, htmlContent, 'utf8');
+
+    // Open the file in the default web browser
+    exec(`start ${tempFilePath}`);
+}
 
 
 export function deactivate(): Thenable<void> | undefined {
