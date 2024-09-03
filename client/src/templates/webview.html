@@ -15,9 +15,8 @@
                     <div class="ably-score-circle">
                         <span class="ably-score-value">1</span> <span style="color:black; font-size: 12px">%</span>
                     </div>
+            	</div>
             </div>
-            </div>
-
             <h1> Accessibility Insights </h1>
         </div>
         <div class="suggestSection">
@@ -28,19 +27,14 @@
             <div   class="categoryDiv">
                 <div class="checkWrap">
                     <div class="titleWrap">
-                        <span class="titleCheck"> Perceivable
-                        </span>
-                        <span id ="pAlert" class="alertCheck">2 alerts
-                        </span>
+                        <span class="titleCheck"> Perceivable </span>
+                        <span id ="pAlert" class="alertCheck">2 alerts </span>
                     </div>
                     <svg  onclick="pClick()" id="pchevDown" class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <path id="chevpath" d="M9 1.32257L5 5.32257L1 1.32257" stroke="white" stroke-width="1.5"
                             stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-
-
-
                 </div>
                 <div id="perceive" class="suggestListDiv">
                     <div class="suggestList">
@@ -48,8 +42,6 @@
                     </div>
                 </div>
             </div>
-
-
             <div class="categoryDiv">
                 <div class="checkWrap">
                     <div class="titleWrap">
@@ -63,9 +55,6 @@
                         <path id="chevpath" d="M9 1.32257L5 5.32257L1 1.32257" stroke="white" stroke-width="1.5"
                             stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-
-
-
                 </div>
                 <div id="operable" class="suggestListDiv">
                     <div class="suggestList">
@@ -73,23 +62,17 @@
                     </div>
                 </div>
             </div>
-
             <div class="categoryDiv">
                 <div class="checkWrap">
                     <div class="titleWrap">
-                        <span class="titleCheck"> Understandable
-                        </span>
-                        <span id ="uAlert" class="alertCheck">2 alerts
-                        </span>
+                        <span class="titleCheck"> Understandable </span>
+                        <span id ="uAlert" class="alertCheck">2 alerts </span>
                     </div>
                     <svg  onclick="uClick()" id="uchevDown"  class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <path id="chevpath" d="M9 1.32257L5 5.32257L1 1.32257" stroke="white" stroke-width="1.5"
                             stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-
-
-
                 </div>
                 <div id="understand" class="suggestListDiv">
                     <div class="suggestList">
@@ -97,12 +80,10 @@
                     </div>
                 </div>
             </div>
-
             <div  class="categoryDiv">
                 <div class="checkWrap">
                     <div class="titleWrap">
-                        <span class="titleCheck"> Robust
-                        </span>
+                        <span class="titleCheck"> Robust </span>
                         <span id ="rAlert" class="alertCheck">2 alerts
                         </span>
                     </div>
@@ -111,9 +92,6 @@
                         <path id="chevpath" d="M9 1.32257L5 5.32257L1 1.32257" stroke="white" stroke-width="1.5"
                             stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-
-
-
                 </div>
                 <div id="robust" class="suggestListDiv">
                     <div class="suggestList">
@@ -121,23 +99,14 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
-
-        <!-- <h1>Ably: Accessibility Insights</h1>
-        <h2>All Suggestions: <span id="dataContainer"></span> </h2>
-
-
-        <p id="demo"></p> -->
-
     </div>
     <script>
         // Total of Errors
-        let ErrorTotal = parseInt("{{score}}", 10);
+        let ErrorTotal = parseInt("{{dataLength}}", 10);
 
         // Total of Elements and their Scoring
-        let totalScore = parseInt("{{dataLength}}", 10);
+        let totalScore = parseInt("{{score}}", 10);
 
         // Final Score Percentage
         let scorePercent = 100.00 - Math.round((ErrorTotal / totalScore) * 100);
