@@ -13,7 +13,7 @@
                 <p class="title-name"> Ab.ly </p>
                 <div class="ably-score">
                     <div class="ably-score-circle">
-                        <span class="ably-score-value">1</span> <span style="color:black; font-size: 12px">%</span>
+                        <span class="ably-score-value">-</span> <span style="color:black; font-size: 12px">%</span>
                     </div>
             	</div>
             </div>
@@ -28,7 +28,7 @@
                 <div class="checkWrap">
                     <div class="titleWrap">
                         <span class="titleCheck"> Perceivable </span>
-                        <span id ="pAlert" class="alertCheck">2 alerts </span>
+                        <span id ="pAlert" class="alertCheck">0 alerts</span>
                     </div>
                     <svg  onclick="pClick()" id="pchevDown" class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -38,17 +38,15 @@
                 </div>
                 <div id="perceive" class="suggestListDiv">
                     <div class="suggestList">
-                        <span class="list"> Hello</span>
+                        <span class="list">An error occurred. Please try again.</span>
                     </div>
                 </div>
             </div>
             <div class="categoryDiv">
                 <div class="checkWrap">
                     <div class="titleWrap">
-                        <span class="titleCheck"> Operable
-                        </span>
-                        <span  id ="oAlert" class="alertCheck">2 alerts
-                        </span>
+                        <span class="titleCheck">Operable</span>
+                        <span id ="oAlert" class="alertCheck">0 alerts</span>
                     </div>
                     <svg  onclick="oClick()" id="ochevDown" class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -58,7 +56,7 @@
                 </div>
                 <div id="operable" class="suggestListDiv">
                     <div class="suggestList">
-                        <span class="list"> Hello</span>
+                        <span class="list">An error occurred. Please try again.</span>
                     </div>
                 </div>
             </div>
@@ -66,7 +64,7 @@
                 <div class="checkWrap">
                     <div class="titleWrap">
                         <span class="titleCheck"> Understandable </span>
-                        <span id ="uAlert" class="alertCheck">2 alerts </span>
+                        <span id ="uAlert" class="alertCheck">0 alerts </span>
                     </div>
                     <svg  onclick="uClick()" id="uchevDown"  class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -76,7 +74,7 @@
                 </div>
                 <div id="understand" class="suggestListDiv">
                     <div class="suggestList">
-                        <span class="list"> Hello</span>
+                        <span class="list"> An error occurred. Please try again.</span>
                     </div>
                 </div>
             </div>
@@ -84,8 +82,7 @@
                 <div class="checkWrap">
                     <div class="titleWrap">
                         <span class="titleCheck"> Robust </span>
-                        <span id ="rAlert" class="alertCheck">2 alerts
-                        </span>
+                        <span id ="rAlert" class="alertCheck">0 alerts</span>
                     </div>
                     <svg   onclick="rClick()" id="rchevDown"  class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -95,7 +92,7 @@
                 </div>
                 <div id="robust" class="suggestListDiv">
                     <div class="suggestList">
-                        <span class="list"> Hello</span>
+                        <span class="list">An error occurred. Please try again.</span>
                     </div>
                 </div>
             </div>
@@ -141,8 +138,6 @@
         const guideArray = guideString.split(' + ');
 
         let newString = "{{stringArray}}"; 
-		// Remove the brackets from the string
-		newString = newString.substring(1, newString.length - 1);
 		const backToArray = newString.split(' + ');
 
 		// Replace special characters with their respective HTML entities
@@ -250,7 +245,7 @@
 
                 onetext += "<span class="+ "list" +">"+ item + " <a href='" + link+ "'>Learn more about SC " + guideArray[index]  +"</a> </span>";
                 x++
-				console.log("item in 1 = " + item);
+				// console.log("item in 1 = " + item);
             }
             else if (guideArray[index].startsWith('2')){
                 twotext += "<span class="+ "list" +">"+ item + " <a href='" + link+ "'>Learn more about SC " + guideArray[index]  +"</a> </span>";

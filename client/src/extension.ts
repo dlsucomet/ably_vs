@@ -153,7 +153,7 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
     private _getHtmlForWebview(webview: vscode.Webview) {
         try {
             score = receivedData.pop();
-            console.log(receivedData);
+            // console.log(receivedData);
 
             let messageArray = [];
             messageArray = receivedData.map(item => item.relatedInformation[0].message);
