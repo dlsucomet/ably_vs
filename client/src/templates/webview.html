@@ -96,6 +96,24 @@
                     </div>
                 </div>
             </div>
+            <div class="categoryDiv">
+                <div class="checkWrap">
+                    <div class="titleWrap">
+                        <span class="titleCheck"> Contrast </span>
+                        <span id ="cAlert" class="alertCheck">0 alerts</span>
+                    </div>
+                    <svg  onclick="cClick()" id="cchevDown" class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path id="chevpath" d="M9 1.32257L5 5.32257L1 1.32257" stroke="white" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div id="contrast" class="suggestListDiv">
+                    <div class="suggestList">
+                        <span class="list">An error occurred. Please try again.</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script>
@@ -147,6 +165,7 @@
         let twotext = "";
         let threetext = "";
         let text = "";
+        let contrasttext = "";
         let numErrors = ""; 
         let errors = [];
         let num="";
@@ -155,12 +174,14 @@
         let num3="";
 
         let num4="";
+        let num5="";
 
         errors = backToArray;
         let x = 0;
         let x2 = 0;
         let x3 = 0;
         let x4 = 0;
+        let x5 = 0;
 
         errors.forEach(addError);
 
@@ -168,10 +189,12 @@
         document.getElementById("operable").innerHTML = twotext;
         document.getElementById("understand").innerHTML = threetext;
         document.getElementById("robust").innerHTML = text;
+        document.getElementById("contrast").innerHTML = contrasttext;
         document.getElementById("pAlert").innerHTML =  num;
         document.getElementById("rAlert").innerHTML =  num2;
         document.getElementById("oAlert").innerHTML =  num3;
         document.getElementById("uAlert").innerHTML = num4;
+        document.getElementById("cAlert").innerHTML = num5;
 
         function getLink(guidelineArray) {
             const linkDictionary = {
@@ -197,33 +220,40 @@
         }
 
         function addError(item, index) {
-            const links = guideArray[index].split(', ');
-            // console.log(links);
-             
-            const anchors = links.map(getLink);
-            // console.log(anchors);
-
-            links.forEach((link, i) => {
-                console.log(link, i);
-                if (link.startsWith('1')){
-                    onetext += "<span class="+ "list" +">"+ item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
-                    x++
-                    // console.log("item in 1 = " + item);
-                }
-                else if (link.startsWith('2')){
-                    twotext += "<span class="+ "list" +">"+ item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
-                    x2++    
-                }
-                else if (link.startsWith('3')){
-                    threetext += "<span class="+ "list" +">"+ item + "<a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
-                    x3++
-                }
-                else if (link.startsWith('4')){
-                    text += "<span class="+ "list" +">"+ item + "  <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
-                    x4++
-                }
+            if (guideArray[index].startsWith('C')) {
+                // console.log("item in C = " + item);
+                contrasttext += "<span class="+ "list" +">"+ item + " Learn more about SC <a href='https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html'>1.4.3</a> and <a href='https://www.w3.org/WAI/WCAG21/Understanding/contrast-enhanced'>1.4.6</a></span>";
+                x5++
                 suggestions++;
-            });
+            } else if (item !== "") {
+                const links = guideArray[index].split(', ');
+                // console.log(links);
+                
+                const anchors = links.map(getLink);
+                // console.log(anchors);
+
+                links.forEach((link, i) => {
+                    // console.log(link, i);
+                    if (link.startsWith('1')){
+                        onetext += "<span class="+ "list" +">"+ item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        x++
+                        // console.log("item in 1 = " + item);
+                    }
+                    else if (link.startsWith('2')){
+                        twotext += "<span class="+ "list" +">"+ item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        x2++    
+                    }
+                    else if (link.startsWith('3')){
+                        threetext += "<span class="+ "list" +">"+ item + "<a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        x3++
+                    }
+                    else if (link.startsWith('4')){
+                        text += "<span class="+ "list" +">"+ item + "  <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        x4++
+                    }
+                    suggestions++;
+                });
+            }
         }
         
 
@@ -231,6 +261,7 @@
         document.getElementById("pAlert").innerHTML = x < 2 ? x + " alert" : x + " alerts";
         document.getElementById("oAlert").innerHTML = x2 < 2 ? x2 + " alert" : x2 + " alerts";
         document.getElementById("rAlert").innerHTML = x4 < 2 ? x4 + " alert" : x4 + " alerts";
+        document.getElementById("cAlert").innerHTML = x5 < 2 ? x5 + " alert" : x5 + " alerts";
         document.getElementById("dataContainer").innerHTML = suggestions;
 
 
@@ -284,6 +315,18 @@
 			  x.style.display = "none";
 			}
 		  }
+
+          function cClick() {
+            var x = document.getElementById("contrast");
+
+            if (x.style.display === "none") {
+                document.getElementById("cchevDown").style.transform="rotate(180deg)"
+              x.style.display = "";
+            } else {
+                document.getElementById("cchevDown").style.transform = "rotate(360deg)"
+              x.style.display = "none";
+            }
+        }
     </script>
 </body>
 </html>

@@ -1108,7 +1108,7 @@ async function validateTextDocument(textDocument) {
         },
       ],
       message: issue.contrastIssue,
-      source: "WCAG 2.1 | 1.4.3, 1.4.6"
+      source: "WCAG 2.1 | Color Contrast (1.4.3, 1.4.6)"
     };
     // console.log(diagnostic);
     diagnostics.push(diagnostic);
