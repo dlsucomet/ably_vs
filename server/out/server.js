@@ -1291,7 +1291,7 @@ async function query(filename) {
     // Capitalize the first character
     alt_text = alt_text.charAt(0).toUpperCase() + alt_text.slice(1);
   
-    return `: <img src='${filename}' alt='${alt_text}'></img>`;
+    return `: <img src='${filename}' alt='${alt_text}'>`;
   } catch (error) {
     // If the image is not supported
     return `. Unfortunately, we cannot recommend an alt-text for this image.`
