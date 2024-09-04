@@ -128,9 +128,7 @@
         // Set the score value
         ablyScore.innerHTML = scorePercent;
 
-        document.getElementById("dataContainer").innerHTML = ErrorTotal;
-
-        var newArray = [];
+        let suggestions = 0;
 
         let guideString = "{{guidelinesString}}";
 		// Remove the brackets from the string
@@ -198,37 +196,34 @@
             return linkDictionary[guidelineArray] || "https://www.notion.so/ably-extension/Guidelines-6c6bf966a38c4f4c8ae95f6d4c421c44";
         }
 
-
-
         function addError(item, index) {
-			// console.log(item, index, guideArray[index]);
-            const link = getLink(guideArray[index]);
+            const links = guideArray[index].split(', ');
+            // console.log(links);
+             
+            const anchors = links.map(getLink);
+            // console.log(anchors);
 
-
-            if (guideArray[index].startsWith('1')){
-                // guideArray[index] = Guideline Number
-
-                onetext += "<span class="+ "list" +">"+ item + " <a href='" + link+ "'>Learn more about SC " + guideArray[index]  +"</a> </span>";
-                x++
-				// console.log("item in 1 = " + item);
-            }
-            else if (guideArray[index].startsWith('2')){
-                twotext += "<span class="+ "list" +">"+ item + " <a href='" + link+ "'>Learn more about SC " + guideArray[index]  +"</a> </span>";
-                x2++
-
-            }
-            else if (guideArray[index].startsWith('3')){
-                threetext += "<span class="+ "list" +">"+ item + "<a href='" + link+ "'>Learn more about SC " + guideArray[index]  +"</a> </span>";
-                x3++
-
-            }
-            else if (guideArray[index].startsWith('4')){
-                text += "<span class="+ "list" +">"+ item + "  <a href='" + link+ "'>Learn more about SC " + guideArray[index]  +"</a> </span>";
-                x4++
-            }
-
-            /** console.log(guideArray[index]);
-            text += "<span class="+ "list" +">"+ item + " <a href='https://www.boia.org/wcag2/cp/" + guideArray[index] + "'>Learn More</a> </span>"; */
+            links.forEach((link, i) => {
+                console.log(link, i);
+                if (link.startsWith('1')){
+                    onetext += "<span class="+ "list" +">"+ item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                    x++
+                    // console.log("item in 1 = " + item);
+                }
+                else if (link.startsWith('2')){
+                    twotext += "<span class="+ "list" +">"+ item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                    x2++    
+                }
+                else if (link.startsWith('3')){
+                    threetext += "<span class="+ "list" +">"+ item + "<a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                    x3++
+                }
+                else if (link.startsWith('4')){
+                    text += "<span class="+ "list" +">"+ item + "  <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                    x4++
+                }
+                suggestions++;
+            });
         }
         
 
@@ -236,6 +231,7 @@
         document.getElementById("pAlert").innerHTML = x < 2 ? x + " alert" : x + " alerts";
         document.getElementById("oAlert").innerHTML = x2 < 2 ? x2 + " alert" : x2 + " alerts";
         document.getElementById("rAlert").innerHTML = x4 < 2 ? x4 + " alert" : x4 + " alerts";
+        document.getElementById("dataContainer").innerHTML = suggestions;
 
 
 		function pClick() {

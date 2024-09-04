@@ -141,7 +141,7 @@ class ColorsViewProvider {
                 .replace('{{stringArray}}', stringArray)
                 .replace('{{styles}}', `<style>${cssContent}</style>`);
             // console.log(htmlContent);
-            // openHtmlInBrowser(htmlContent);
+            openHtmlInBrowser(htmlContent);
             return htmlContent;
         }
         catch (error) {
@@ -150,14 +150,14 @@ class ColorsViewProvider {
     }
 }
 ColorsViewProvider.viewType = 'calicoColors.colorsView';
-// import * as os from 'os';
-// import { exec } from 'child_process';
-// function openHtmlInBrowser(htmlContent: string): void {
-//     const tempFilePath = path.join(os.tmpdir(), 'temp.html');
-//     fs.writeFileSync(tempFilePath, htmlContent, 'utf8');
-//     // Open the file in the default web browser
-//     exec(`start ${tempFilePath}`);
-// }
+const os = require("os");
+const child_process_1 = require("child_process");
+function openHtmlInBrowser(htmlContent) {
+    const tempFilePath = path.join(os.tmpdir(), 'temp.html');
+    fs.writeFileSync(tempFilePath, htmlContent, 'utf8');
+    // Open the file in the default web browser
+    (0, child_process_1.exec)(`start ${tempFilePath}`);
+}
 function deactivate() {
     if (!client) {
         return undefined;
