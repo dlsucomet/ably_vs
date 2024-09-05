@@ -45,7 +45,7 @@ function checkWCAG135a(m, text, textDocument, problems, diagnostics, settings, h
 // Check pattern 1.3.5b
 function checkWCAG135b(m, text, textDocument, problems, diagnostics, settings, hasDiagnosticRelatedInformationCapability) {
 	while (
-		(m = pattern1352.exec(text)) &&
+		(m = pattern135b.exec(text)) &&
 		problems < settings.maxNumberOfProblems
 	) {
 		problems++;
