@@ -22,6 +22,7 @@ let hasDiagnosticRelatedInformationCapability = false;
 const WHATWGtoWCAG = require("./dicts/whatwg");
 const W3CtoWCAG = require("./dicts/w3c");
 const checkWCAG = require("./regex/wcag");
+const suggestAltText = require("./helpers/img-caption");
 
 function countAttributes(html) {
   const rules = [
@@ -179,15 +180,6 @@ async function validateTextDocument(textDocument) {
   const diagnostics = [];
   // Regex patterns are used to identify if the HTML file does not follow a certain WCAG Success Criteria
   checkWCAG(m, text, textDocument, problems, diagnostics, settings, hasDiagnosticRelatedInformationCapability);
-
-  // input elements must have an aria-label or aria-labelledby attribute
- 
-
-  // textarea elements must have an aria-label or aria-labelledby attribute
-  
-
-  // select elements must have an aria-label or aria-labelledby attribute
-  
 
   // W3C Validator
   const W3C = {
@@ -403,7 +395,7 @@ async function processDiagnostics(msg, diagnostics, problems, settings, textDocu
         const src = imgTag.match(/src\s*=\s*['"`](.*?)['"`]/i)[1];
 
         try {
-          const altText = await query(src);
+          const altText = await suggestAltText(src);
           wcag.suggestMsg = `Please add an 'alt' attribute to your image element to ensure accessibility${altText}`;
           // console.log(wcag.suggestMsg);
         } catch (error) {
@@ -430,61 +422,7 @@ async function processDiagnostics(msg, diagnostics, problems, settings, textDocu
 
 }
 
-// Import the env (must be in the same folder as the server.js file)
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
-const fs1 = require('fs'); // Import the promises API from the fs module
 
-// A function that generates an alt text for an image
-async function query(filename) {
-  try {
-    let data;
-    if (filename.startsWith("http") || filename.startsWith("https")) {
-      data = JSON.stringify({ url: filename });
-    } else {
-      data = fs1.readFileSync(filename);
-    }
-    const token = process.env.BLIP_TOKEN;
-    // console.log(token);
-    const response = await fetch(
-        "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large",
-        {
-            headers: {
-                Authorization: token,
-                "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: data,
-        }
-    );
-    const result = await response.json();
-  
-    // lowercase the alt text
-    // console.log(result);
-    let alt_text = result[0].generated_text;
-  
-  
-    // Remove the "There are" and "There is" parts
-    alt_text = alt_text.replace("there are ", "");
-    alt_text = alt_text.replace("there is ", "");
-
-    // Remove "arafed", "araffe", and "araf" parts
-    alt_text = alt_text.replace("arafed ", ""); 
-    alt_text = alt_text.replace("araffe ", "");
-    alt_text = alt_text.replace("araf ", "person");
-    alt_text = alt_text.replace("arafe ", "");
-    alt_text = alt_text.replace("araffes ", "people ");
-    alt_text = alt_text.replace("araffy ", "");
-  
-    // Capitalize the first character
-    alt_text = alt_text.charAt(0).toUpperCase() + alt_text.slice(1);
-  
-    return `: <img src='${filename}' alt='${alt_text}'>`;
-  } catch (error) {
-    // If the image is not supported
-    return `. Unfortunately, we cannot recommend an alt-text for this image.`
-  }
-}
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events

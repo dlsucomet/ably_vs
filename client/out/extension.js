@@ -98,11 +98,8 @@ class ColorsViewProvider {
     _getHtmlForWebview(webview) {
         try {
             score = receivedData.pop();
-            // console.log(receivedData);
             let messageArray = [];
             messageArray = receivedData.map(item => item.relatedInformation[0].message);
-            let errorArray = [];
-            errorArray = receivedData.map(item => item.message);
             let lineArray = [];
             lineArray = receivedData.map(item => item.range.start.line + 1);
             let wcagArray = [];
@@ -112,36 +109,25 @@ class ColorsViewProvider {
                 const [, value] = item.split(" | ");
                 return value;
             });
-            // console.log(extractedValues);
             let finalArray = [];
             finalArray = receivedData.map((item, index) => {
                 return `Line ${lineArray[index]}:  ${messageArray[index]}`;
             });
-            // console.log(finalArray);
             let stringArray = "";
             stringArray = finalArray.join(' + ');
             let guidelinesString = "";
             guidelinesString = extractedValues.join(' + ');
-            // console.log(stringArray);
-            // console.log(guidelinesString);
             dataLength = receivedData.length;
-            // console.log(`Score: ${dataLength}/ ${score}`);
             const htmlFilePath = path.join(__dirname, '..', 'src', 'templates', 'webview.html');
-            // console.log(htmlFilePath);
             let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-            // console.log(htmlContent);
             const cssFilePath = path.join(__dirname, '..', 'src', 'templates', 'styles.css');
-            // console.log(cssFilePath);
             const cssContent = fs.readFileSync(cssFilePath, 'utf8');
-            // console.log(cssContent);
             htmlContent = htmlContent
                 .replace('{{score}}', score.toString())
                 .replace('{{dataLength}}', dataLength.toString())
                 .replace('{guidelinesString}', guidelinesString)
                 .replace('{{stringArray}}', stringArray)
                 .replace('{{styles}}', `<style>${cssContent}</style>`);
-            // console.log(htmlContent);
-            // openHtmlInBrowser(htmlContent);
             return htmlContent;
         }
         catch (error) {
@@ -150,14 +136,6 @@ class ColorsViewProvider {
     }
 }
 ColorsViewProvider.viewType = 'calicoColors.colorsView';
-// import * as os from 'os';
-// import { exec } from 'child_process';
-// function openHtmlInBrowser(htmlContent: string): void {
-//     const tempFilePath = path.join(os.tmpdir(), 'temp.html');
-//     fs.writeFileSync(tempFilePath, htmlContent, 'utf8');
-//     // Open the file in the default web browser
-//     exec(`start ${tempFilePath}`);
-// }
 function deactivate() {
     if (!client) {
         return undefined;

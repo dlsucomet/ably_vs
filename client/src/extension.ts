@@ -16,9 +16,7 @@ import {
 } from 'vscode-languageclient/node';
 
 let client: LanguageClient;
-
 let receivedData;
-
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -60,38 +58,24 @@ export async function activate(context: vscode.ExtensionContext) {
         clientOptions
     );
 
-
-
     //console.log("------ REFRESH -----");
-
     client.start();
     //client.sendNotification("custom/refreshClient", {});
     let done = 1;
     client.onReady().then(() => {
-
         client.onNotification("custom/loadFiles", (files: Array<string>) => {
             //console.log("loading files " + JSON.stringify(files));
             // console.log(files);
             receivedData = files;
             // console.log(receivedData);
-
-            
             if (done != 2) {
                 context.subscriptions.push(
                     vscode.window.registerWebviewViewProvider(ColorsViewProvider.viewType, provider));
             }
-
-
             done = 2;
             provider.callView();
-
-
         });
-
     });
-
-
-
 }
 
 let score = 0;
@@ -99,9 +83,7 @@ let dataLength = 0;
 
 class ColorsViewProvider implements vscode.WebviewViewProvider {
 
-
     public static readonly viewType = 'calicoColors.colorsView';
-
     private _view?: vscode.WebviewView;
 
     constructor(
@@ -112,7 +94,6 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
     ) {
         this._view = webviewView;
 
-
         webviewView.webview.options = {
             // Allow scripts in the webview
             enableScripts: true,
@@ -122,11 +103,7 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
             ]
         };
 
-
-
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-
-
         //console.log(webviewView);
 
         webviewView.webview.onDidReceiveMessage(data => {
@@ -153,16 +130,11 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
     private _getHtmlForWebview(webview: vscode.Webview) {
         try {
             score = receivedData.pop();
-            // console.log(receivedData);
 
             let messageArray = [];
             messageArray = receivedData.map(item => item.relatedInformation[0].message);
-            let errorArray = [];
-            errorArray = receivedData.map(item => item.message);
             let lineArray = [];
-
             lineArray = receivedData.map(item => item.range.start.line + 1);
-
             let wcagArray = [];
             wcagArray = (receivedData.map(item => item.source));
 
@@ -171,33 +143,22 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
                 const [, value] = item.split(" | ");
                 return value;
             });
-            // console.log(extractedValues);
-
             let finalArray = [];
             finalArray = receivedData.map((item, index) => {
                 return `Line ${lineArray[index]}:  ${messageArray[index]}`;
             });
-            // console.log(finalArray);
 
             let stringArray = "";
             stringArray = finalArray.join(' + ');
             let guidelinesString = "";
             guidelinesString = extractedValues.join(' + ');
-            // console.log(stringArray);
-            // console.log(guidelinesString);
             
             dataLength = receivedData.length;
-            // console.log(`Score: ${dataLength}/ ${score}`);
 
             const htmlFilePath = path.join(__dirname, '..', 'src', 'templates', 'webview.html');
-            // console.log(htmlFilePath);
             let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-            // console.log(htmlContent);
-
             const cssFilePath = path.join(__dirname, '..', 'src', 'templates', 'styles.css');
-            // console.log(cssFilePath);
             const cssContent = fs.readFileSync(cssFilePath, 'utf8');
-            // console.log(cssContent);
 
             htmlContent = htmlContent
                 .replace('{{score}}', score.toString())
@@ -206,28 +167,12 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
                 .replace('{{stringArray}}', stringArray)
                 .replace('{{styles}}', `<style>${cssContent}</style>`);
 
-            // console.log(htmlContent);
-            // openHtmlInBrowser(htmlContent);
-
             return htmlContent;
-       
         } catch (error) {
             console.log(error);
         }
     }
 }
-
-// import * as os from 'os';
-// import { exec } from 'child_process';
-
-// function openHtmlInBrowser(htmlContent: string): void {
-//     const tempFilePath = path.join(os.tmpdir(), 'temp.html');
-//     fs.writeFileSync(tempFilePath, htmlContent, 'utf8');
-
-//     // Open the file in the default web browser
-//     exec(`start ${tempFilePath}`);
-// }
-
 
 export function deactivate(): Thenable<void> | undefined {
     if (!client) {
