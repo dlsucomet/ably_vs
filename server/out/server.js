@@ -19,255 +19,10 @@ let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
 let hasDiagnosticRelatedInformationCapability = false;
 
-// WHATWG Dictionary for what WCAG rules are being checked
-const WHATWGtoRule = [
-  { 
-    ruleid: "area-alt",
-    wcag: "WCAG 2.2 | 1.1.1, 2.4.4, 2.4.9",
-    errorMsg: "'alt' attribute must be set and non-empty when the 'href' attribute is present (area-alt)",
-    suggestMsg: "Please add an 'alt' and 'href' attribute to your area element to ensure accessibility."
-  },
-  { 
-    ruleid: "aria-hidden-body", 
-    wcag: "WCAG 2.2 | 1.3.1",
-    errorMsg: "aria-hidden must not be used on <body>",
-    suggestMsg: "Please do not use aria-hidden attribute in the <body> element",
-  },
-  { 
-    ruleid: "aria-label-misuse", 
-    wcag: "WCAG 2.2 | 4.1.2",
-    errorMsg: "'aria-label' cannot be used on this element",
-    suggestMsg: "Please do not use aria-label on this element"
-  },
-  { 
-    ruleid: "empty-heading", 
-    wcag: "WCAG 2.2 | 2.4.6",
-    errorMsg: "Headings cannot be empty.",
-    suggestMsg: "Please make sure to provide descriptive headings for your content."
-  },
-  { 
-    ruleid: "empty-title", 
-    wcag: "WCAG 2.2 | 2.4.2",
-    errorMsg: "Title cannot be empty.",
-    suggestMsg: "Please make sure to provide a descriptive title"
-  },
-  { 
-    ruleid: "hidden-focusable", 
-    wcag: "WCAG 2.2 | 2.4.3, 4.1.2",
-    errorMsg: "aria-hidden cannot be used on focusable elements",
-    suggestMsg: "Please remove aria-hidden or remove the element"
-  },
-  { ruleid: "input-missing-label", 
-    wcag: "WCAG 2.2 | 1.1.1",
-    errorMsg: "Input is missing a label",
-    suggestMsg: "Please add a label attribute to your input."
-  },
-  { ruleid: "meta-refresh", 
-    wcag: "WCAG2 2.2 | 2.2.1, 2.2.4, 3.2.5",
-    errorMsg: "Meta refresh should either be instant or not be used.",
-    suggestMsg: "Please remove it if not necessary or set it to 0 seconds.",
-  },
-  { 
-    ruleid: "multiple-labeled-controls", 
-    wcag: "WCAG 2.2 | 1.3.1, 4.1.2",
-    errorMsg: "Label must not be associated with multiple controls.",
-    suggestMsg: "Please make sure that each label is associated with only one control.",
-  },
-  { 
-    ruleid: "no-autoplay", 
-    wcag: "WCAG 2.2 | 1.4.2, 2.2.2",
-    errorMsg: "Autoplay should not be used as it can be disruptive to users.",
-    suggestMsg: "Please remove the autoplay attribute from your media element.",
-  },
-  { 
-    ruleid: "wcag/h30", 
-    wcag: "WCAG 2.2 | 1.1.1, 2.4.4, 2.4.9",
-    errorMsg: "Anchor link must have a text describing its purpose.",
-    suggestMsg: "Please add either an 'alt' tribute inside your anchor link or a text describing it."
-  },
-  { 
-    ruleid: "wcag/h32", 
-    wcag: "WCAG 2.2 | 3.2.2",
-    errorMsg: "Form elements must have a submit button",
-    suggestMsg: "Please add submit button on your form group.",
-  },
-  { 
-    ruleid: "wcag/h36", 
-    wcag: "WCAG 2.2 | 1.1.1",
-    errorMsg: "Images used as submit buttons should have a non-empty alt attribute.",
-    suggestMsg: "Please add an 'alt' attribute to your image element to ensure accessibility: <img src='...' alt='Submit button'>"
-  },
-  { 
-    ruleid: "wcag/h37", 
-    wcag: "WCAG 2.2 | 1.1.1",
-    errorMsg: "Image elements should have an alt attribute.",
-    suggestMsg: `Please add an 'alt' attribute to your image element to ensure accessibility: <img src='...' alt=>`,
-  },
-  { 
-    ruleid: "wcag/h63", 
-    wcag: "WCAG 2.2 | 1.3.1",
-    errorMsg: "Header elements must have content and be properly nested.",
-    suggestMsg: "Please add a valid scope attribute (row, col, rowgroup, colgroup) to your header element.",
-  },
-  { 
-    ruleid: "wcag/h67", 
-    wcag: "WCAG 2.2 | 1.1.1",
-    errorMsg: "Image elements should have an alt attribute.",
-    suggestMsg: `Please add an 'alt' attribute to your image element to ensure accessibility: <img src='...' alt=>`,
-  },
-  { ruleid: "wcag/h71", 
-    wcag: "WCAG 2.2 | 1.3.1, 3.3.2",
-    errorMsg: "Fieldset must contain a legend element.",
-    suggestMsg: "Please add a <legend> element to your fieldset.",
-  },
-  { ruleid: "long-title", 
-    wcag: "WCAG 2.2 | 2.4.2",
-    errorMsg: "Title text cannot be longer than 70 characters.",
-    suggestMsg: "Please limit your webpage title to below 70 characters for better SEO.",
-  },
-  { 
-    ruleid: "heading-level", 
-    wcag: "WCAG 2.2 | 2.4.10",
-    errorMsg: "Heading level can only increase by one.",
-    suggestMsg: "Please check if your headings start at h1 and if it only increases one level at a time. (h1>h6)",
-  }
-];
-
-// W3C Dictionary for what WCAG rules are being checked
-const W3CtoRule = [
-  {
-    ruleid:`An “img” element must have an “alt” attribute`,
-    wcag: "WCAG 2.1 | 1.1.1",
-    errorMsg: "Image elements should have an alt attribute.",
-    suggestMsg: `Please add an 'alt' attribute to your image element to ensure accessibility: <img src='...' alt=>`,
-  },
-  {
-    ruleid: "Unclosed element",
-    wcag: "WCAG 2.1 | 4.1.1",
-    errorMsg: "Element must have a proper opening/closing tag.",
-    suggestMsg: "Please add the appropriate HTML tag to complete.",
-  },
-  {
-    ruleid: "Stray end tag",
-    wcag: "WCAG 2.1 | 4.1.1",
-    errorMsg: "Element must have a proper opening/closing tag.",
-    suggestMsg: "Please add the appropriate HTML tag to complete.",
-  },
-  {
-    ruleid: "Duplicate ID",
-    wcag: "WCAG 2.1 | 4.1.1",
-    errorMsg: "Element must have unique IDs.",
-    suggestMsg: "Please make sure all your attributes have different and unique IDs.",
-  },
-  {
-    ruleid: `Element “title” must not be empty.`,
-    wcag: "WCAG 2.1 | 2.4.2",
-    errorMsg: "Element title cannot be empty, must have text content",
-    suggestMsg: "Please add a descriptive title to your content.",
-  },
-  {
-    ruleid: "missing a required instance of child element",
-    wcag: "WCAG 2.1 | 2.4.2",
-    errorMsg: "Element title cannot be empty, must have text content",
-    suggestMsg: "Please add a descriptive title to your content.",
-  },
-  {
-    ruleid: "is missing a required instance of child element",
-    wcag: "WCAG 2.1 | 2.4.2",
-    errorMsg: "Web pages must have a descriptive and concise title that accurately reflects the topic or purpose of the page.",
-    suggestMsg: "Please add a descriptive and concise title to your web page using the 'title' element within the 'head' section.",
-  },
-  {
-    ruleid: `Consider adding a “lang” attribute to the “html” start tag to declare the language of this document.`,
-    wcag: "WCAG 2.1 | 3.1.1",
-    errorMsg: "You must programatically define the primary language of each page.",
-    suggestMsg: "Please add a lang attribute to the HTML tag and state the primary language.",
-  },
-  {
-    ruleid: `Element “area” is missing required attribute “alt”`,
-    wcag: "WCAG 2.1 | 1.1.1",
-    errorMsg: "'Area' elements should have an alt attribute.",
-    suggestMsg: "Please add an 'alt' attribute to your area element to ensure accessibility.",
-  },
-  {
-    ruleid: `Element “area” is missing required attribute “href”`,
-    wcag: "WCAG 2.1 | 1.1.1",
-    errorMsg: "'Area' elements should have an href attribute.",
-    suggestMsg: "Make sure there is an 'href' present in your area element.",
-  },
-  {
-    ruleid: "<input> element does not have a <label>",
-    wcag: "WCAG 2.1 | 1.1.1",
-    errorMsg: "Input is missing a label",
-    suggestMsg: "Please add a label attribute to your input.",
-  },
-  {
-    ruleid: "title text cannot be longer than 70 characters",
-    wcag: "WCAG 2.1 | 2.4.2",
-    errorMsg: "Title text cannot be longer than 70 characters.",
-    suggestMsg: "Please limit your webpage title to below 70 characters for better SEO.",
-  },
-  {
-    ruleid: "Anchor link must have a text describing its purpose",
-    wcag: "WCAG 2.1 | 2.4.4",
-    errorMsg: "Anchor link must have a text describing its purpose.",
-    suggestMsg: "Please add either an 'alt' tribute inside your anchor link or a text describing it.",
-  },
-  {
-    ruleid: "Empty Heading",
-    wcag: "WCAG 2.1 | 2.4.6",
-    errorMsg: "Headings cannot be empty.",
-    suggestMsg: "Please make sure to provide descriptive headings for your content.",
-  },
-  {
-    ruleid: "Heading level can only increase by one, expected <h2> but got <h3>",
-    wcag: "WCAG 2.1 | 2.4.10",
-    errorMsg: "Heading level can only increase by one.",
-    suggestMsg: "Please check if your headings start at h1 and if it only increases one level at a time. (h1>h6)",
-  },
-  {
-    ruleid: `Element “area” is missing required attribute “alt”`,
-    wcag: "WCAG 2.1 | 1.1.1",
-    errorMsg: "'Area' elements should have an alt attribute.",
-    suggestMsg: "Please add an 'alt' attribute to your area element to ensure accessibility.",
-  },
-  {
-    ruleid: `Element “area” is missing required attribute “href”`,
-    wcag: "WCAG 2.1 | 1.1.1",
-    errorMsg: "'Area' elements should have an href attribute.",
-    suggestMsg: "Make sure there is an 'href' present in your area element.",
-  },
-  {
-    ruleid: "<input> element does not have a <label>",
-    wcag: "WCAG 2.1 | 1.1.1",
-    errorMsg: "Input is missing a label",
-    suggestMsg: "Please add a label attribute to your input.",
-  },
-  {
-    ruleid: "<form> element must have a submit button",
-    wcag: "WCAG 2.1 | 3.2.2",
-    errorMsg: "Form elements must have a submit button",
-    suggestMsg: "Please add submit button on your form group.",
-  },
-  {
-    ruleid: "<textarea> element does not have a <label>",
-    wcag: "WCAG 2.1 | 3.3.2",
-    errorMsg: "Textarea is missing a label",
-    suggestMsg: "Please add a label attribute to your input.",
-  },
-  {
-    ruleid: "<input> element does not have a <label>",
-    wcag: "WCAG 2.1 | 3.3.2",
-    errorMsg: "Input is missing a label",
-    suggestMsg: "Please add a label attribute to your input.",
-  },
-  {
-    ruleid: "<select> element does not have a <label>",
-    wcag: "WCAG 2.1 | 3.3.2",
-    errorMsg: "Select is missing a label",
-    suggestMsg: "Please add a label attribute to your input.",
-    },
-];
+// WHATWG to WCAG rules dictionary
+const WHATWGtoWCAG = require("./rules/whatwg");
+// W3C to WCAG rules dictionary
+const W3CtoWCAG = require("./rules/w3c");
 
 function countAttributes(html) {
   const rules = [
@@ -721,7 +476,7 @@ async function validateTextDocument(textDocument) {
             uri: textDocument.uri,
             range: Object.assign({}, diagnostic.range),
           },
-          message: "Please add a 'name' attribute (ex: <input name=''/>)",
+          message: "Please add a 'name' attribute (ex: <input name='/>)",
         },
       ];
     }
@@ -1026,7 +781,7 @@ async function validateTextDocument(textDocument) {
     }
     problems++;
 
-    const wcag = WHATWGtoRule.find((element) => element.ruleid == error.ruleId);
+    const wcag = WHATWGtoWCAG.find((element) => element.ruleid == error.ruleId);
     
     // If the error is not in the list of WCAG rules, skip it
     if (wcag == undefined) {
@@ -1190,7 +945,7 @@ async function processDiagnostics(msg, diagnostics, problems, settings, textDocu
     }
     problems++;
 
-    const wcag = W3CtoRule.find((element) => msg.message.includes(element.ruleid));
+    const wcag = W3CtoWCAG.find((element) => msg.message.includes(element.ruleid));
     if (wcag == undefined) {
       return;
     }
