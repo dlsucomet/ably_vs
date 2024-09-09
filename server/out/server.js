@@ -19,68 +19,10 @@ let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
 let hasDiagnosticRelatedInformationCapability = false;
 
-const WHATWGtoWCAG = require("./dicts/whatwg-wcag");
-const W3CtoWCAG = require("./dicts/w3c-wcag");
 const checkWCAG = require("./regex/wcag");
-const suggestAltText = require("./helpers/img-caption");
-
-function countAttributes(html) {
-  const rules = [
-    { name: 'area', score: 1 },
-    { name: 'background-position-x', score: 1 },
-    { name: 'background-position-y', score: 1 },
-    { name: 'background-size', score: 1 },
-    { name: 'border-radius', score: 1 },
-    { name: 'button', score: 1 },
-    { name: 'font-size', score: 1 },
-    { name: 'height', score: 1 },
-    { name: 'html', score: 1 },
-    { name: 'img', score: 1 },
-    { name: 'input', score: 5 },
-    { name: 'left', score: 1 },
-    { name: 'letter-spacing', score: 1 },
-    { name: 'line-height', score: 1 },
-    { name: 'margin', score: 1 },
-    { name: 'max-height', score: 1 },
-    { name: 'min-height', score: 1 },
-    { name: 'min-width', score: 1 },
-    { name: 'opacity', score: 1 },
-    { name: 'outline-offset', score: 1 },
-    { name: 'padding', score: 1 },
-    { name: 'right', score: 1 },
-    { name: 'select', score: 3 },
-    { name: 'text-indent', score: 1 },
-    { name: 'textarea', score: 1 },
-    { name: 'title', score: 1 },
-    { name: 'top', score: 1 },
-    { name: 'transform-origin', score: 1 },
-    { name: 'width', score: 1 },
-    { name: 'z-index', score: 1 },
-  ];
-
-  const counts = {};
-  let total = 0;
-
-  for (const { name, score } of rules) {
-    const regex = new RegExp(`<${name}[^>]*>`, 'gi');
-    const count = (html.match(regex) || []).length;
-    counts[name] = count;
-    total += count * score;
-   // console.log(count);
-    //console.log("elements");
-
-  }
-  for (const { name, score } of rules) {
-    const regex = new RegExp(`${name}:`, 'gi');
-    const count = (html.match(regex) || []).length;
-    //console.log(count);
-    counts[name] = count;
-    //console.log(count);
-    total += count * score;
-
-  }
-  return total;
-}
+const processW3C = require("./validators/w3c");
+const processWHATWG = require("./validators/whatwg");
+const countAttributes = require("./helpers/count-attributes");
 
 connection.onInitialize((params) => {
   const capabilities = params.capabilities;
@@ -180,91 +122,15 @@ async function validateTextDocument(textDocument) {
   const diagnostics = [];
   // Regex patterns are used to identify if the HTML file does not follow a certain WCAG Success Criteria
   checkWCAG(m, text, textDocument, problems, diagnostics, settings, hasDiagnosticRelatedInformationCapability);
-
   // W3C Validator
-  const W3C = {
-    data: text,
-    format: "json",
-  };
-
+  const W3C = { data: text, format: "json" };
   const W3Cresult = await validator(W3C);
-  const diagnosticPromises = W3Cresult.messages.map((msg) => processDiagnostics(msg, diagnostics, problems, settings, textDocument));
+  const diagnosticPromises = W3Cresult.messages.map((msg) => processW3C(msg, diagnostics, problems, settings, textDocument, hasDiagnosticRelatedInformationCapability));
   await Promise.all(diagnosticPromises);
-
   // WHATWG Validator
-  const WHATWG = {
-    data: text,
-    validator: 'WHATWG',
-    format: "json",
-  };
-
+  const WHATWG = { data: text, validator: 'WHATWG', format: "json" };
   const WHATWGresult = await validator(WHATWG);
-
-  WHATWGresult.errors.forEach((error) => {
-    if (problems >= settings.maxNumberOfProblems) {
-      return;
-    }
-    problems++;
-
-    const wcag = WHATWGtoWCAG.find((element) => element.ruleid == error.ruleId);
-    
-    // If the error is not in the list of WCAG rules, skip it
-    if (wcag == undefined) {
-      return;
-    }
-    console.log(`WHATWG: Line ${error.line} Column ${error.column}: ${wcag.errorMsg}`);
-    
-    // If a similar diagnostic has already been added, skip it
-    const isExisting = diagnostics.find((diag) =>
-      diag.range.start.line === (error.line - 1) &&
-      (diag.range.start.character - error.column) === -1 &&
-      diag.message === wcag.errorMsg
-    );
-    // console.log(isExisting);
-    if (isExisting) {
-      return
-    }
-
-    // console.log(wcag);
-    
-    const diagnostic = {
-      severity: node_1.DiagnosticSeverity.Warning,
-      range: {
-        start: {
-          line: error.line - 1,
-          character: error.column - 1,
-        },
-        end: {
-          line: error.line - 1,
-          character: error.column - 1 + error.size,
-        },
-      },
-      message: wcag.errorMsg,
-      source: wcag.wcag,
-    };
-    if (hasDiagnosticRelatedInformationCapability) {
-      diagnostic.relatedInformation = [
-        {
-          location: {
-            uri: textDocument.uri,
-            range: {
-              start: {
-                line: error.line - 1,
-                character: error.column - 1,
-              },
-              end: {
-                line: error.line - 1,
-                character: error.column - 1 + error.size,
-              },
-            },
-          },
-          message: wcag.suggestMsg,
-        },
-      ];
-    }
-    diagnostics.push(diagnostic);
-  });
-
+  WHATWGresult.errors.forEach((msg) => processWHATWG(msg, diagnostics, problems, settings, textDocument, hasDiagnosticRelatedInformationCapability))
   // Color Contrast
   const contrastIssues = checkDocumentContrast(textDocument._content);
   // console.log(contrastIssues);
@@ -293,40 +159,20 @@ async function validateTextDocument(textDocument) {
     // console.log(diagnostic);
     diagnostics.push(diagnostic);
   });
-
   // Sort the diagnostics by start's line number > column number > end's line number > column number > source
-  diagnostics.sort((a, b) => {
-    if (a.range.start.line === b.range.start.line) {
-      if (a.range.start.character === b.range.start.character) {
-        if (a.range.end.line === b.range.end.line) {
-          if (a.range.end.character === b.range.end.character) {
-            return a.source.localeCompare(b.source);
-          } else {
-            return a.range.end.character - b.range.end.character;
-          }
-        } else {
-          return a.range.end.line - b.range.end.line;
-        }
-      } else {
-        return a.range.start.character - b.range.start.character;
-      }
-    } else {
-      return a.range.start.line - b.range.start.line;
-    }
-  });
-
-  // Send the computed diagnostics to VSCode.
+  diagnostics.sort((a, b) => 
+    a.range.start.line - b.range.start.line ||
+    a.range.start.character - b.range.start.character ||
+    a.range.end.line - b.range.end.line ||
+    a.range.end.character - b.range.end.character ||
+    a.source.localeCompare(b.source)
+  );
+  // Send the computed diagnostics to VSCode (must be done first).
   connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
-  var files = diagnostics;
-  const html = text;
-  const score = countAttributes(html);
-
-  //  console.log("SCORE");
-  //  console.log(score); // Output: 14
-
-  var files = diagnostics;
-  files.push(score);
-  connection.sendNotification("custom/loadFiles", files);
+  // Add the score to the diagnostics and send it to the client
+  const score = countAttributes(text);
+  diagnostics.push(score);
+  connection.sendNotification("custom/loadFiles", diagnostics);
 }
 
 connection.onDidChangeWatchedFiles((_change) => {
@@ -363,64 +209,6 @@ connection.onCompletionResolve((item) => {
   }
   return item;
 });
-
-async function processDiagnostics(msg, diagnostics, problems, settings, textDocument) {
-    if (problems >= settings.maxNumberOfProblems) {
-      return;
-    }
-    problems++;
-
-    const wcag = W3CtoWCAG.find((element) => msg.message.includes(element.ruleid));
-    if (wcag == undefined) {
-      return;
-    }
-     // console.log(wcag);
-
-    const diagnostic = {
-      severity: node_1.DiagnosticSeverity.Warning,
-      range: {
-        start: {line: msg.lastLine - 1, character: msg.firstColumn},
-        end: {line: msg.lastLine - 1, character: msg.lastColumn - 1}
-      },
-      message: wcag.errorMsg,
-      source: wcag.wcag,
-    };
-    console.log(`W3C: Line ${diagnostic.range.start.line} Column ${diagnostic.range.start.character}: ${diagnostic.message}`);
-
-    // If the extract is about an image, generate an alt text
-    if (wcag.suggestMsg.includes("Please add an 'alt' attribute to your image")) {
-      const extracted = msg.extract;
-      if (extracted) {
-        const imgTag = extracted.match(/<img[^>]*>/g)[0];
-        const src = imgTag.match(/src\s*=\s*['"`](.*?)['"`]/i)[1];
-
-        try {
-          const altText = await suggestAltText(src);
-          wcag.suggestMsg = `Please add an 'alt' attribute to your image element to ensure accessibility${altText}`;
-          // console.log(wcag.suggestMsg);
-        } catch (error) {
-          // console.error('Error fetching alt text:', error);
-        }
-      }
-    }
-
-    if (hasDiagnosticRelatedInformationCapability) {
-      diagnostic.relatedInformation = [
-        {
-          location: {
-            uri: textDocument.uri,
-            range: {
-              start: {line: msg.lastLine - 1, character: msg.firstColumn},
-              end: {line: msg.lastLine - 1, character: msg.lastColumn - 1}
-            },
-          },
-          message: wcag.suggestMsg,
-        },
-      ];
-    }
-    diagnostics.push(diagnostic);
-
-}
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
