@@ -12,10 +12,14 @@ async function suggestAltText(imgPath) {
   try {
     let imgData;
 	// Check if the filename is a URL or a local file
-    if (imgPath.startsWith("http") || imgPath.startsWith("https")) {
-      imgData = JSON.stringify({ url: imgPath });
-    } else {
-      imgData = fs.readFileSync(imgPath);
+    try {  
+      if (imgPath.startsWith("http") || imgPath.startsWith("https")) {
+        imgData = JSON.stringify({ url: imgPath });
+      } else {
+        imgData = fs.readFileSync(imgPath);
+      }
+    } catch (error) {
+      return `. Unfortunately, we cannot find the image.`;
     }
     // Get the token from the environment
 	  const token = process.env.BLIP_TOKEN;
