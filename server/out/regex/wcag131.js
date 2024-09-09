@@ -42,8 +42,8 @@ function checkDocument131a(m, text, textDocument, problems, diagnostics, setting
 		const diagnostic = {
 			severity: DiagnosticSeverity.Warning,
 			range: {
-				start: textDocument.positionAt(m.index),
-				end: textDocument.positionAt(m.index + m[0].length)
+				start: textDocument.positionAt(m.index + 1),
+				end: textDocument.positionAt(m.index + m[0].length - 1)
 			},
 			message: `Navbars should be more accessible. Provide structure and semantic meaning to the navigation links.`,
 			source: "WCAG 2.1 | 1.3.1",
@@ -73,8 +73,8 @@ function checkDocument131b(m, text, textDocument, problems, diagnostics, setting
 		const diagnostic = {
 		  	severity: DiagnosticSeverity.Warning,
 		  	range: {
-				start: textDocument.positionAt(m.index),
-				end: textDocument.positionAt(m.index + m[0].length),
+				start: textDocument.positionAt(m.index + 1),
+				end: textDocument.positionAt(m.index + m[0].length - 1),
 		  	},
 			message: `The footer element must be in its proper place. There should also be only one footer element per page.`,
 		  	source: "WCAG 2.1 | 1.3.1",
@@ -104,8 +104,8 @@ function checkDocument131c(m, text, textDocument, problems, diagnostics, setting
 		const diagnostic = {
 			severity: DiagnosticSeverity.Warning,
 			range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 			},
 			message: `The main landmark element must have additional context.`,
 			source: "WCAG 2.1 | 1.3.1",
@@ -135,8 +135,8 @@ function checkDocument131d(m, text, textDocument, problems, diagnostics, setting
 		const diagnostic = {
 			severity: DiagnosticSeverity.Warning,
 			range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 			},
 			message: `The header landmark element must have additional context.`,
 			source: "WCAG 2.1 | 1.3.1",
@@ -166,8 +166,8 @@ function checkDocument131e(m, text, textDocument, problems, diagnostics, setting
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `The nav landmark element must have additional context.`,
 		  source: "WCAG 2.1 | 1.3.1",
@@ -197,8 +197,8 @@ function checkDocument131f(m, text, textDocument, problems, diagnostics, setting
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `The aside landmark element must have additional context.`,
 		  source: "WCAG 2.1 | 1.3.1",
@@ -228,8 +228,8 @@ function checkDocument131g(m, text, textDocument, problems, diagnostics, setting
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `The footer landmark element must have additional context.`,
 		  source: "WCAG 2.1 | 1.3.1",
@@ -256,8 +256,8 @@ function checkDocument131h(m, text, textDocument, problems, diagnostics, setting
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `Span has a 'font' attribute. Try making it simpler and more intuitive.`,
 		  source: "WCAG 2.1 | 1.3.1",

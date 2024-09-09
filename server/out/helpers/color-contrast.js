@@ -203,7 +203,7 @@ const defaultBackgroundColor = "#ffffff"; // White
     } else {
       return {
         contrastIssue: contrastIssue,
-        start: elementStartIndex + 1,
+        start: elementStartIndex,
         end: elementEndIndex         
       };
     }

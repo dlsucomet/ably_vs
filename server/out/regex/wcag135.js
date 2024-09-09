@@ -21,8 +21,8 @@ function checkWCAG135a(m, text, textDocument, problems, diagnostics, settings, h
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `Headings and labels should be descriptive.`,
 		  source: "WCAG 2.1 | 1.3.5",
@@ -52,8 +52,8 @@ function checkWCAG135b(m, text, textDocument, problems, diagnostics, settings, h
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `Input elements must have a type attributed to identify their purpose.`,
 		  source: "WCAG 2.1 | 1.3.5",

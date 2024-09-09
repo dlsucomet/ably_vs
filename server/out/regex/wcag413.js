@@ -13,8 +13,8 @@ function checkWCAG413(m, text, textDocument, problems, diagnostics, settings, ha
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `Status messages should both have an aria-live attribute and "status" as its role attribute.`,
 		  source: "WCAG 2.1 | 4.1.3",

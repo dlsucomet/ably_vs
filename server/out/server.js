@@ -19,8 +19,8 @@ let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
 let hasDiagnosticRelatedInformationCapability = false;
 
-const WHATWGtoWCAG = require("./dicts/whatwg");
-const W3CtoWCAG = require("./dicts/w3c");
+const WHATWGtoWCAG = require("./dicts/whatwg-wcag");
+const W3CtoWCAG = require("./dicts/w3c-wcag");
 const checkWCAG = require("./regex/wcag");
 const suggestAltText = require("./helpers/img-caption");
 
@@ -212,12 +212,12 @@ async function validateTextDocument(textDocument) {
     if (wcag == undefined) {
       return;
     }
-    // console.log(`WHATWG: Line ${error.line} Column ${error.column}: ${wcag.errorMsg}`);
+    console.log(`WHATWG: Line ${error.line} Column ${error.column}: ${wcag.errorMsg}`);
     
     // If a similar diagnostic has already been added, skip it
     const isExisting = diagnostics.find((diag) =>
       diag.range.start.line === (error.line - 1) &&
-      (diag.range.start.character - error.column) === -2 &&
+      (diag.range.start.character - error.column) === -1 &&
       diag.message === wcag.errorMsg
     );
     // console.log(isExisting);
@@ -379,13 +379,13 @@ async function processDiagnostics(msg, diagnostics, problems, settings, textDocu
     const diagnostic = {
       severity: node_1.DiagnosticSeverity.Warning,
       range: {
-        start: {line: msg.lastLine - 1, character: msg.firstColumn - 1 },
+        start: {line: msg.lastLine - 1, character: msg.firstColumn},
         end: {line: msg.lastLine - 1, character: msg.lastColumn - 1}
       },
       message: wcag.errorMsg,
       source: wcag.wcag,
     };
-    // console.log(`W3C: Line ${diagnostic.range.start.line} Column ${diagnostic.range.start.character}: ${diagnostic.message}`);
+    console.log(`W3C: Line ${diagnostic.range.start.line} Column ${diagnostic.range.start.character}: ${diagnostic.message}`);
 
     // If the extract is about an image, generate an alt text
     if (wcag.suggestMsg.includes("Please add an 'alt' attribute to your image")) {
@@ -410,7 +410,7 @@ async function processDiagnostics(msg, diagnostics, problems, settings, textDocu
           location: {
             uri: textDocument.uri,
             range: {
-              start: {line: msg.lastLine - 1, character: msg.firstColumn - 1 },
+              start: {line: msg.lastLine - 1, character: msg.firstColumn},
               end: {line: msg.lastLine - 1, character: msg.lastColumn - 1}
             },
           },
@@ -421,8 +421,6 @@ async function processDiagnostics(msg, diagnostics, problems, settings, textDocu
     diagnostics.push(diagnostic);
 
 }
-
-
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events

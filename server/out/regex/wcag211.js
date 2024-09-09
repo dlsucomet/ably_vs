@@ -21,8 +21,8 @@ function checkWCAG211a(m, text, textDocument, problems, diagnostics, settings, h
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `All functionality should be operable with a keyboard. Choose between the two options.`,
 		  source: "WCAG 2.1 | 2.1.1",
@@ -60,8 +60,8 @@ function checkWCAG211b(m, text, textDocument, problems, diagnostics, settings, h
 		const diagnostic = {
 		  severity: node_1.DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `All functionality should be operable with a keyboard. Choose between the two options.`,
 		  source: "WCAG 2.1 | 2.1.1",

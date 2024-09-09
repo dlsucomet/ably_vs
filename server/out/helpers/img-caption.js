@@ -47,8 +47,6 @@ async function suggestAltText(imgPath) {
 	// Return the alt text as a string of the img tag
 	return `: <img src='${imgPath}' alt='${generatedCaption}'>`;
   } catch (error) {
-	// For debugging purposes
-	console.log(error);
     // If the image is not supported
     return `. Unfortunately, we cannot recommend an alt-text for this image.`
   }

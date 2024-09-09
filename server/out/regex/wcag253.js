@@ -27,8 +27,8 @@ function checkWCAG253a(m, text, textDocument, problems, diagnostics, settings, h
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `The button element needs more context.`,
 		  source: "WCAG 2.1 | 2.5.3",
@@ -59,11 +59,11 @@ function checkWCAG253b(m, text, textDocument, problems, diagnostics, settings, h
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `The input element needs more context.`,
-		  source: "WCAG 2.1 | 1.3.1",
+		  source: "WCAG 2.1 | 2.5.3",
 		};
 		if (hasDiagnosticRelatedInformationCapability) {
 		  diagnostic.relatedInformation = [
@@ -90,11 +90,11 @@ function checkWCAG253c(m, text, textDocument, problems, diagnostics, settings, h
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `The textarea element needs more context.`,
-		  source: "WCAG 2.1 | 1.3.1",
+		  source: "WCAG 2.1 | 2.5.3",
 		};
 		if (hasDiagnosticRelatedInformationCapability) {
 		  diagnostic.relatedInformation = [
@@ -121,11 +121,11 @@ function checkWCAG253d(m, text, textDocument, problems, diagnostics, settings, h
 		const diagnostic = {
 		  severity: DiagnosticSeverity.Warning,
 		  range: {
-			start: textDocument.positionAt(m.index),
-			end: textDocument.positionAt(m.index + m[0].length),
+			start: textDocument.positionAt(m.index + 1),
+			end: textDocument.positionAt(m.index + m[0].length - 1),
 		  },
 		  message: `The select element needs more context.`,
-		  source: "WCAG 2.1 | 1.3.1",
+		  source: "WCAG 2.1 | 2.5.3",
 		};
 		if (hasDiagnosticRelatedInformationCapability) {
 		  diagnostic.relatedInformation = [
