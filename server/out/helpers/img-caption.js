@@ -43,6 +43,7 @@ async function suggestAltText(imgPath) {
 		.replace("arafe ", "")
 		.replace("araffes ", "people ")
 		.replace("araffy ", "")
+    .replace("araffed ", "")
 	generatedCaption = generatedCaption.charAt(0).toUpperCase() + generatedCaption.slice(1);
 	// Return the alt text as a string of the img tag
 	return `: <img src='${imgPath}' alt='${generatedCaption}'>`;
