@@ -23,6 +23,7 @@ const checkWCAG = require("./regex/wcag");
 const processW3C = require("./validators/w3c");
 const processWHATWG = require("./validators/whatwg");
 const countAttributes = require("./helpers/count-attributes");
+const processContrast = require("./validators/contrast");
 
 connection.onInitialize((params) => {
   const capabilities = params.capabilities;
@@ -133,32 +134,7 @@ async function validateTextDocument(textDocument) {
   WHATWGresult.errors.forEach((msg) => processWHATWG(msg, diagnostics, problems, settings, textDocument, hasDiagnosticRelatedInformationCapability))
   // Color Contrast
   const contrastIssues = checkDocumentContrast(textDocument._content);
-  // console.log(contrastIssues);
-  contrastIssues.forEach((issue) => {
-    const diagnostic = {
-      severity: node_1.DiagnosticSeverity.Warning,
-      range: {
-        start: textDocument.positionAt(issue.start),
-        end: textDocument.positionAt(issue.end),
-      },
-      relatedInformation: [
-        {
-          location: {
-            uri: textDocument.uri,
-            range: {
-              start: textDocument.positionAt(issue.start),
-              end: textDocument.positionAt(issue.end),
-            },
-          },
-          message: "Please increase the color contrast of the elements.",
-        },
-      ],
-      message: issue.contrastIssue,
-      source: "WCAG 2.1 | Color Contrast (1.4.3, 1.4.6)"
-    };
-    // console.log(diagnostic);
-    diagnostics.push(diagnostic);
-  });
+  contrastIssues.forEach((msg) => processContrast(msg, diagnostics, problems, settings, textDocument, hasDiagnosticRelatedInformationCapability));
   // Sort the diagnostics by start's line number > column number > end's line number > column number > source
   diagnostics.sort((a, b) => 
     a.range.start.line - b.range.start.line ||
