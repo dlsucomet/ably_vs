@@ -1,12 +1,11 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.deactivate = exports.activate = void 0;
 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.deactivate = exports.activate = void 0;
 const path = require("path");
-const vscode_1 = require("vscode");
 const vscode = require("vscode");
 const fs = require("fs");
 const node_1 = require("vscode-languageclient/node");
@@ -36,19 +35,15 @@ async function activate(context) {
             { scheme: 'file', language: 'javascript' }],
         synchronize: {
             // Notify the server about file changes to 'all' files contained in the workspace
-            fileEvents: vscode_1.workspace.createFileSystemWatcher('**/*'),
+            fileEvents: vscode.workspace.createFileSystemWatcher('**/*'),
         },
     };
     // Create the language client and start the client.
     client = new node_1.LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);
-    //console.log("------ REFRESH -----");
     client.start();
-    //client.sendNotification("custom/refreshClient", {});
     let done = 1;
     client.onReady().then(() => {
         client.onNotification("custom/loadFiles", (files) => {
-            //console.log("loading files " + JSON.stringify(files));
-            // console.log(files);
             receivedData = files;
             // console.log(receivedData);
             if (done != 2) {
@@ -71,12 +66,9 @@ class ColorsViewProvider {
         webviewView.webview.options = {
             // Allow scripts in the webview
             enableScripts: true,
-            localResourceRoots: [
-                this._extensionUri
-            ]
+            localResourceRoots: [this._extensionUri]
         };
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-        //console.log(webviewView);
         webviewView.webview.onDidReceiveMessage(data => {
             switch (data.type) {
                 case 'colorSelected':
@@ -87,9 +79,7 @@ class ColorsViewProvider {
             }
         });
     }
-    callView() {
-        this.updateView(this._view);
-    }
+    callView() { this.updateView(this._view); }
     updateView(webviewView) {
         //console.log("here");
         this._view = webviewView;

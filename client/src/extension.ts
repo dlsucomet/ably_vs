@@ -2,9 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-
 import * as path from 'path';
-import { workspace, ExtensionContext } from 'vscode';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
@@ -21,13 +19,11 @@ let receivedData;
 export async function activate(context: vscode.ExtensionContext) {
 
     const provider = new ColorsViewProvider(context.extensionUri);
-
     // The server is implemented in node
     const serverModule = context.asAbsolutePath(path.join('server', 'out', 'server.js'));
     // The debug options for the server
     // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
     const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
-
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions: ServerOptions = {
@@ -38,7 +34,6 @@ export async function activate(context: vscode.ExtensionContext) {
             options: debugOptions,
         },
     };
-
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
         // Register the server for javascript documents
@@ -46,10 +41,9 @@ export async function activate(context: vscode.ExtensionContext) {
         { scheme: 'file', language: 'javascript' }],
         synchronize: {
             // Notify the server about file changes to 'all' files contained in the workspace
-            fileEvents: workspace.createFileSystemWatcher('**/*'),
+            fileEvents: vscode.workspace.createFileSystemWatcher('**/*'),
         },
     };
-
     // Create the language client and start the client.
     client = new LanguageClient(
         'languageServerExample',
@@ -58,14 +52,10 @@ export async function activate(context: vscode.ExtensionContext) {
         clientOptions
     );
 
-    //console.log("------ REFRESH -----");
     client.start();
-    //client.sendNotification("custom/refreshClient", {});
     let done = 1;
     client.onReady().then(() => {
         client.onNotification("custom/loadFiles", (files: Array<string>) => {
-            //console.log("loading files " + JSON.stringify(files));
-            // console.log(files);
             receivedData = files;
             // console.log(receivedData);
             if (done != 2) {
@@ -86,25 +76,19 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'calicoColors.colorsView';
     private _view?: vscode.WebviewView;
 
-    constructor(
-        private readonly _extensionUri: vscode.Uri,
-    ) { }
+    constructor(private readonly _extensionUri: vscode.Uri) { }
 
-    public resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, _token: vscode.CancellationToken,
-    ) {
+    public resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, _token: vscode.CancellationToken) {
+        
         this._view = webviewView;
 
         webviewView.webview.options = {
             // Allow scripts in the webview
             enableScripts: true,
-
-            localResourceRoots: [
-                this._extensionUri
-            ]
+            localResourceRoots: [ this._extensionUri ]
         };
 
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-        //console.log(webviewView);
 
         webviewView.webview.onDidReceiveMessage(data => {
             switch (data.type) {
@@ -117,9 +101,7 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
         });
     }
 
-    public callView() {
-        this.updateView(this._view);
-    }
+    public callView() { this.updateView(this._view); }
 
     public updateView(webviewView: vscode.WebviewView) {
         //console.log("here");

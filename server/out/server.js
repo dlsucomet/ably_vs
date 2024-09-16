@@ -7,7 +7,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_1 = require("vscode-languageserver/node");
 const vscode_languageserver_textdocument_1 = require("vscode-languageserver-textdocument");
 const validator = require("@pamkirsten/html-validator");
-const { checkDocumentContrast } = require("./helpers/color-contrast");
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = (0, node_1.createConnection)(node_1.ProposedFeatures.all);
@@ -18,12 +17,6 @@ const documents = new node_1.TextDocuments(
 let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
 let hasDiagnosticRelatedInformationCapability = false;
-
-const checkWCAG = require("./regex/wcag");
-const processW3C = require("./validators/w3c");
-const processWHATWG = require("./validators/whatwg");
-const countAttributes = require("./helpers/count-attributes");
-const processContrast = require("./validators/contrast");
 
 connection.onInitialize((params) => {
   const capabilities = params.capabilities;
@@ -113,6 +106,13 @@ documents.onDidSave((change) => {
   validateTextDocument(change.document);
 });
 
+const checkWCAG = require("./regex/wcag");
+const processW3C = require("./validators/w3c");
+const processWHATWG = require("./validators/whatwg");
+const processContrast = require("./validators/contrast");
+const countAttributes = require("./helpers/count-attributes");
+const checkDocumentContrast = require("./helpers/color-contrast");
+
 async function validateTextDocument(textDocument) {
   // In this simple example we get the settings for every validate run.
   const settings = await getDocumentSettings(textDocument.uri);
@@ -185,7 +185,6 @@ connection.onCompletionResolve((item) => {
   }
   return item;
 });
-
 // Make the text document manager listen on the connection
 // for open, change and close text document events
 documents.listen(connection);
