@@ -117,6 +117,7 @@ async function validateTextDocument(textDocument) {
   // In this simple example we get the settings for every validate run.
   const settings = await getDocumentSettings(textDocument.uri);
   const text = textDocument.getText();
+  connection.sendNotification("custom/ready", []);
   // These variables are there to store and tally the number of problems found in the HTML file
   let m;
   let problems = 0;
