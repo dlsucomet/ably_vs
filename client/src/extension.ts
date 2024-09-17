@@ -19,6 +19,7 @@ let receivedData;
 export async function activate(context: vscode.ExtensionContext) {
 
     const provider = new ColorsViewProvider(context.extensionUri);
+    context.subscriptions.push(vscode.window.registerWebviewViewProvider(ColorsViewProvider.viewType, provider));
     // The server is implemented in node
     const serverModule = context.asAbsolutePath(path.join('server', 'out', 'server.js'));
     // The debug options for the server
@@ -53,15 +54,10 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 
     client.start();
-    let done = 0;
     client.onReady().then(() => {
         vscode.window.showInformationMessage('AB.LY is now active!');
+        provider.callView("initial");
         client.onNotification("custom/ready", () => {
-            if (done != 1) {
-                context.subscriptions.push(
-                    vscode.window.registerWebviewViewProvider(ColorsViewProvider.viewType, provider));
-            }
-            done = 1;
             provider.callView("loading");
         });
         client.onNotification("custom/loadFiles", (files: Array<string>) => {
@@ -92,7 +88,6 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
             localResourceRoots: [ this._extensionUri ]
         };
 
-        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview, "loading");
 
         webviewView.webview.onDidReceiveMessage(data => {
             switch (data.type) {
@@ -172,6 +167,16 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
                     .replace('{{styles}}', `<style>${cssContent}</style>`)
                     .replace('{{htmlChecked}}', htmlChecked);
 
+                return htmlContent;
+            } else if (status == "initial") {
+                const htmlFilePath = path.join(__dirname, '..', 'src', 'templates', 'index.html');
+                let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+                const cssFilePath = path.join(__dirname, '..', 'src', 'templates', 'styles.css');
+                const cssContent = fs.readFileSync(cssFilePath, 'utf8');
+
+                htmlContent = htmlContent
+                    .replace('{{styles}}', `<style>${cssContent}</style>`);
+                    
                 return htmlContent;
             }
         } catch (error) {
