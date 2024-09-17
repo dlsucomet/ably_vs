@@ -41,16 +41,20 @@ async function activate(context) {
     // Create the language client and start the client.
     client = new node_1.LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);
     client.start();
-    let done = 1;
+    let done = 0;
     client.onReady().then(() => {
+        vscode.window.showInformationMessage('AB.LY is now active!');
+        client.onNotification("custom/ready", () => {
+            if (done != 1) {
+                context.subscriptions.push(vscode.window.registerWebviewViewProvider(ColorsViewProvider.viewType, provider));
+            }
+            done = 1;
+            provider.callView("loading");
+        });
         client.onNotification("custom/loadFiles", (files) => {
             receivedData = files;
             // console.log(receivedData);
-            if (done != 2) {
-                context.subscriptions.push(vscode.window.registerWebviewViewProvider(ColorsViewProvider.viewType, provider));
-            }
-            done = 2;
-            provider.callView();
+            provider.callView("loaded");
         });
     });
 }
@@ -68,7 +72,7 @@ class ColorsViewProvider {
             enableScripts: true,
             localResourceRoots: [this._extensionUri]
         };
-        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview, "loading");
         webviewView.webview.onDidReceiveMessage(data => {
             switch (data.type) {
                 case 'colorSelected':
@@ -79,46 +83,64 @@ class ColorsViewProvider {
             }
         });
     }
-    callView() { this.updateView(this._view); }
-    updateView(webviewView) {
+    callView(status) { this.updateView(this._view, status); }
+    updateView(webviewView, status) {
         //console.log("here");
         this._view = webviewView;
-        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview, status);
     }
-    _getHtmlForWebview(webview) {
+    _getHtmlForWebview(webview, status) {
         try {
-            score = receivedData.pop();
-            let messageArray = [];
-            messageArray = receivedData.map(item => item.relatedInformation[0].message);
-            let lineArray = [];
-            lineArray = receivedData.map(item => item.range.start.line + 1);
-            let wcagArray = [];
-            wcagArray = (receivedData.map(item => item.source));
-            let extractedValues = [];
-            extractedValues = wcagArray.map(item => {
-                const [, value] = item.split(" | ");
-                return value;
-            });
-            let finalArray = [];
-            finalArray = receivedData.map((item, index) => {
-                return `Line ${lineArray[index]}:  ${messageArray[index]}`;
-            });
-            let stringArray = "";
-            stringArray = finalArray.join(' + ');
-            let guidelinesString = "";
-            guidelinesString = extractedValues.join(' + ');
-            dataLength = receivedData.length;
-            const htmlFilePath = path.join(__dirname, '..', 'src', 'templates', 'webview.html');
-            let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-            const cssFilePath = path.join(__dirname, '..', 'src', 'templates', 'styles.css');
-            const cssContent = fs.readFileSync(cssFilePath, 'utf8');
-            htmlContent = htmlContent
-                .replace('{{score}}', score.toString())
-                .replace('{{dataLength}}', dataLength.toString())
-                .replace('{guidelinesString}', guidelinesString)
-                .replace('{{stringArray}}', stringArray)
-                .replace('{{styles}}', `<style>${cssContent}</style>`);
-            return htmlContent;
+            const activeEditor = vscode.window.activeTextEditor;
+            let htmlChecked;
+            if (activeEditor) {
+                htmlChecked = path.basename(activeEditor.document.fileName);
+            }
+            if (status == "loaded") {
+                score = receivedData.pop();
+                let messageArray = [];
+                messageArray = receivedData.map(item => item.relatedInformation[0].message);
+                let lineArray = [];
+                lineArray = receivedData.map(item => item.range.start.line + 1);
+                let wcagArray = [];
+                wcagArray = (receivedData.map(item => item.source));
+                let extractedValues = [];
+                extractedValues = wcagArray.map(item => {
+                    const [, value] = item.split(" | ");
+                    return value;
+                });
+                let finalArray = [];
+                finalArray = receivedData.map((item, index) => {
+                    return `Line ${lineArray[index]}:  ${messageArray[index]}`;
+                });
+                let stringArray = "";
+                stringArray = finalArray.join(' + ');
+                let guidelinesString = "";
+                guidelinesString = extractedValues.join(' + ');
+                dataLength = receivedData.length;
+                const htmlFilePath = path.join(__dirname, '..', 'src', 'templates', 'webview.html');
+                let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+                const cssFilePath = path.join(__dirname, '..', 'src', 'templates', 'styles.css');
+                const cssContent = fs.readFileSync(cssFilePath, 'utf8');
+                htmlContent = htmlContent
+                    .replace('{{score}}', score.toString())
+                    .replace('{{dataLength}}', dataLength.toString())
+                    .replace('{guidelinesString}', guidelinesString)
+                    .replace('{{stringArray}}', stringArray)
+                    .replace('{{styles}}', `<style>${cssContent}</style>`)
+                    .replace('{{htmlChecked}}', htmlChecked);
+                return htmlContent;
+            }
+            else if (status == "loading") {
+                const htmlFilePath = path.join(__dirname, '..', 'src', 'templates', 'loading.html');
+                let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+                const cssFilePath = path.join(__dirname, '..', 'src', 'templates', 'styles.css');
+                const cssContent = fs.readFileSync(cssFilePath, 'utf8');
+                htmlContent = htmlContent
+                    .replace('{{styles}}', `<style>${cssContent}</style>`)
+                    .replace('{{htmlChecked}}', htmlChecked);
+                return htmlContent;
+            }
         }
         catch (error) {
             console.log(error);
