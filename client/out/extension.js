@@ -100,19 +100,27 @@ class ColorsViewProvider {
                 lineArray = receivedData.map(item => item.range.start.line + 1);
                 let wcagArray = [];
                 wcagArray = (receivedData.map(item => item.source));
+                let lineLinks = [];
+                lineLinks = receivedData.map((item, index) => {
+                    const line = item.range.start.line + 1;
+                    const column = item.range.start.character + 1;
+                    let lineLink = `vscode://file/${activeEditor.document.uri.fsPath}:${line}:${column}`;
+                    lineLink = lineLink.replace(/\\/g, '/');
+                    return lineLink;
+                });
                 let extractedValues = [];
                 extractedValues = wcagArray.map(item => {
                     const [, value] = item.split(" | ");
                     return value;
                 });
-                let finalArray = [];
-                finalArray = receivedData.map((item, index) => {
-                    return `Line ${lineArray[index]}:  ${messageArray[index]}`;
-                });
                 let stringArray = "";
-                stringArray = finalArray.join(' + ');
+                stringArray = messageArray.join(' + ');
                 let guidelinesString = "";
                 guidelinesString = extractedValues.join(' + ');
+                let linesString = "";
+                linesString = lineArray.join(' + ');
+                let lineLinksString = "";
+                lineLinksString = lineLinks.join(' + ');
                 dataLength = receivedData.length;
                 const htmlFilePath = path.join(__dirname, '..', 'src', 'templates', 'webview.html');
                 let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -122,6 +130,8 @@ class ColorsViewProvider {
                     .replace('{{score}}', score.toString())
                     .replace('{{dataLength}}', dataLength.toString())
                     .replace('{guidelinesString}', guidelinesString)
+                    .replace('{{lineLinks}}', lineLinksString)
+                    .replace('{{lineArray}}', linesString)
                     .replace('{{stringArray}}', stringArray)
                     .replace('{{styles}}', `<style>${cssContent}</style>`)
                     .replace('{{htmlChecked}}', htmlChecked);
