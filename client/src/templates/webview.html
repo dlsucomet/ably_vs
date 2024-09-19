@@ -156,6 +156,12 @@
         let newString = "{{stringArray}}"; 
 		const backToArray = newString.split(' + ');
 
+        let lineArray = "{{lineArray}}";
+        const linesInArray = lineArray.split(' + ');
+
+        let lineLinks = "{{lineLinks}}";
+        const lineLinksInArray = lineLinks.split(' + ');
+
 		// Replace special characters with their respective HTML entities
 		backToArray.forEach((item, index) => {
 			backToArray[index] = item.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -220,9 +226,10 @@
         }
 
         function addError(item, index) {
+            let line = "<a class='line-link' href='" + lineLinksInArray[index] + "'>Line " + linesInArray[index] + "</a>: ";
             if (guideArray[index].startsWith('C')) {
                 // console.log("item in C = " + item);
-                contrasttext += "<span class="+ "list" +">"+ item + " Learn more about SC <a href='https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html'>1.4.3</a> and <a href='https://www.w3.org/WAI/WCAG21/Understanding/contrast-enhanced'>1.4.6</a></span>";
+                contrasttext += "<span class="+ "list" +">"+ line + item + " Learn more about SC <a href='https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html'>1.4.3</a> and <a href='https://www.w3.org/WAI/WCAG21/Understanding/contrast-enhanced'>1.4.6</a></span>";
                 x5++
                 suggestions++;
             } else if (item !== "") {
@@ -235,20 +242,20 @@
                 links.forEach((link, i) => {
                     // console.log(link, i);
                     if (link.startsWith('1')){
-                        onetext += "<span class="+ "list" +">"+ item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        onetext += "<span class="+ "list" +">"+ line + item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
                         x++
                         // console.log("item in 1 = " + item);
                     }
                     else if (link.startsWith('2')){
-                        twotext += "<span class="+ "list" +">"+ item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        twotext += "<span class="+ "list" +">"+ line + item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
                         x2++    
                     }
                     else if (link.startsWith('3')){
-                        threetext += "<span class="+ "list" +">"+ item + "<a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        threetext += "<span class="+ "list" +">"+ line + item + "<a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
                         x3++
                     }
                     else if (link.startsWith('4')){
-                        text += "<span class="+ "list" +">"+ item + "  <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        text += "<span class="+ "list" +">"+ line + item + "  <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
                         x4++
                     }
                     suggestions++;

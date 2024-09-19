@@ -274,6 +274,10 @@ a:visited{
 
 }
 
+.line-link:visited, .line-link:hover, .line-link:active, .line-link:link {
+	color: #3498db;
+}
+
 .list {
 
 	font-family: 'DM Sans';
