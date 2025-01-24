@@ -152,10 +152,13 @@ function checkContrast(element, window, document, html, index) {
   let textColor = rgbToHex(window.getComputedStyle(element).color, "text");
   // console.log("Text color:", textColor);
 
-  let bgColor = rgbToHex(
-    window.getComputedStyle(document.body).backgroundColor,
-    "background"
-  );
+  // Retrieves the backgroundcolor of the element, if none goes to the parent element
+  let actualBg = element
+  while (actualBg.localName != "body" && actualBg.style.backgroundColor == "") {
+    actualBg = actualBg.parentElement
+  }  
+
+  let bgColor = rgbToHex(window.getComputedStyle(actualBg).backgroundColor,"background");
   // console.log("Background color:", bgColor);
 
   const contrastRatio = checkContrastRatio(textColor, bgColor);
@@ -230,7 +233,6 @@ function checkDocumentContrast(html) {
   // Check the color contrast of each element
   let indexMap = {} // hashmap for duplicate elements
 	elements.forEach(element => {
-
     // Finds all indexes of the element
     let indexes = getIndexes(element.outerHTML, html)
     let index = 0
