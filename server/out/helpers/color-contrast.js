@@ -193,9 +193,9 @@ function checkContrast(element, window, document, html, index) {
   }
 
   // Find the index of the element's HTML within the document's HTML
-  const elementStartIndex = index + (element.outerHTML).lastIndexOf(element.textContent);
+  console.log(element)
+  const elementStartIndex = index + (element.outerHTML).lastIndexOf(">" + element.textContent) + 1;
   const elementEndIndex = elementStartIndex + element.textContent.length;
-
 
   // Only return the element if it has a color contrast issue
   if (elementStartIndex < 1 || elementEndIndex < 1) {
