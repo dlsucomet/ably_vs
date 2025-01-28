@@ -135,6 +135,7 @@ async function validateTextDocument(textDocument) {
   WHATWGresult.errors.forEach((msg) => processWHATWG(msg, diagnostics, problems, settings, textDocument, hasDiagnosticRelatedInformationCapability))
   // Color Contrast
   const contrastIssues = checkDocumentContrast(textDocument._content);
+  console.log(contrastIssues)
   contrastIssues.forEach((msg) => processContrast(msg, diagnostics, problems, settings, textDocument, hasDiagnosticRelatedInformationCapability));
   // Sort the diagnostics by start's line number > column number > end's line number > column number > source
   diagnostics.sort((a, b) => 
