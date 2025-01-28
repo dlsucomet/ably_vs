@@ -256,4 +256,4 @@ function checkDocumentContrast(html) {
 	return colorContrastIssues;
 }
 
-module.exports = checkDocumentContrast;
+module.exports = {checkDocumentContrast, getContrastRatio};
