@@ -111,7 +111,7 @@ const processW3C = require("./validators/w3c");
 const processWHATWG = require("./validators/whatwg");
 const processContrast = require("./validators/contrast");
 const countAttributes = require("./helpers/count-attributes");
-const checkDocumentContrast = require("./helpers/color-contrast");
+const { checkDocumentContrast } = require("./helpers/color-contrast");
 
 async function validateTextDocument(textDocument) {
   // In this simple example we get the settings for every validate run.
