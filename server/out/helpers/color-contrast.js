@@ -136,13 +136,23 @@ function appendElement(level, contrast, element, document) {
 }
 
 function getIndexes(element, html) {
-  var elementLen = element.length;
-  var startIndex = 0, index, indexes = [];
-  while ((index = html.indexOf(element, startIndex)) > -1) {
-      indexes.push(index);
-      startIndex = index + elementLen;
+  // console.log(element)
+  var indexes = []
+  reg = new RegExp(element.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&').replace(/\s+/g, '\\s+'), 'g');
+  // console.log(reg)
+  finding = [...html.matchAll(reg)];
+  // console.log(finding)
+  finding.forEach(data => {
+    indexes.push(data.index);
+  })
+  return indexes
+}
+
+function isThereNoText (element) {
+  for (let i = 0; i < element.childNodes.length; i++) {
+    if (element.childNodes[i].nodeName == "#text" && !(element.childNodes[i].textContent).match(/^\s*$/)) return false;
   }
-  return indexes;
+  return true
 }
   
 function checkContrast(element, window, document, html, index) {
@@ -196,9 +206,10 @@ function checkContrast(element, window, document, html, index) {
   }
 
   // Find the index of the element's HTML within the document's HTML
-  // console.log(element)
-  const elementStartIndex = index + (element.outerHTML).lastIndexOf(">" + element.textContent) + 1;
-  const elementEndIndex = elementStartIndex + element.textContent.length;
+  // const elementStartIndex = index + (element.outerHTML).lastIndexOf(">" + element.textContent) + 1;
+  // const elementEndIndex = elementStartIndex + element.textContent.length;
+  const elementStartIndex = index;
+  const elementEndIndex = elementStartIndex + (element.outerHTML).indexOf(">") + 1;
 
   // Only return the element if it has a color contrast issue
   if (elementStartIndex < 1 || elementEndIndex < 1) {
@@ -232,9 +243,12 @@ function checkDocumentContrast(html) {
 	
   // Check the color contrast of each element
   let indexMap = {} // hashmap for duplicate elements
-	elements.forEach(element => {
+  for (let i = 0; i < elements.length; i++) {
+    // Checks if there is a text under the element, if not skips the process
+    if (isThereNoText(elements[i])) continue;
+
     // Finds all indexes of the element
-    let indexes = getIndexes(element.outerHTML, html)
+    let indexes = getIndexes(elements[i].outerHTML, html)
     let index = 0
 
     // checks if theres a duplicate and goes to the next one if it has been used
@@ -244,9 +258,9 @@ function checkDocumentContrast(html) {
     } else if (indexes.length > 1) {
       indexMap[indexes] = 0
     }
-    
-    colorContrastIssues.push(checkContrast(element, window, document, html, indexes[index]))
-  });
+
+    colorContrastIssues.push(checkContrast(elements[i], window, document, html, indexes[index]))
+  }
 
   // Remove element if there is no contrast issue
   for (let i = colorContrastIssues.length - 1; i >= 0; i--) {
@@ -254,7 +268,7 @@ function checkDocumentContrast(html) {
       colorContrastIssues.splice(i, 1);
     }
   }
-
+  
 	return colorContrastIssues;
 }
 
