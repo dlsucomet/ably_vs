@@ -23,7 +23,7 @@ function processContrast(msg, diagnostics, problems, settings, textDocument, has
 					uri: textDocument.uri,
 					range: Object.assign({}, diagnostic.range),
 				},
-				message: "Use the color " + msg.suggestion.name.value + ". Hex value = " + msg.suggestion.hex.value,
+				message: msg.suggestion,
 			},
 		];
 	}

@@ -161,7 +161,9 @@ async function getSuggestion(textColor) {
     const response = await fetch (
       "https://www.thecolorapi.com/scheme?hex=" + textColor + "&mode=complement"
     );
-    return response.json()
+    data = await response.json()
+    console.log(data)
+    return "Use the color \"" + data.colors[0].name.value + "\" for the text. Hex value = " + data.colors[0].hex.value
   } catch (error) {
     return `We cannot suggest a color`
   }
@@ -234,14 +236,15 @@ async function checkContrast(element, window, document, html, index) {
     return {
       contrastIssue: "",
       start: -1,
-      end: -1
+      end: -1,
+      suggestion: ""
     };
   } else {
     return {
       contrastIssue: contrastIssue,
       start: elementStartIndex,
       end: elementEndIndex,
-      suggestion: suggestion.colors[0]
+      suggestion: suggestion
     };
   }
 }
