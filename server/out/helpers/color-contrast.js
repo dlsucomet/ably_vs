@@ -154,8 +154,20 @@ function isThereNoText (element) {
   }
   return true
 }
+
+async function getSuggestion(textColor) {
+  textColor = textColor.replace("#","")
+  try {
+    const response = await fetch (
+      "https://www.thecolorapi.com/id?hex=" + {textColor}
+    );
+    return response.json
+  } catch (error) {
+    return `We cannot suggest a color`
+  }
+}
   
-function checkContrast(element, window, document, html, index) {
+async function checkContrast(element, window, document, html, index) {
   let contrastIssue = "";
   // console.log("Checking contrast for element:", element.className);
   // Get the text and background colors of an element
@@ -210,6 +222,10 @@ function checkContrast(element, window, document, html, index) {
   // const elementEndIndex = elementStartIndex + element.textContent.length;
   const elementStartIndex = index;
   const elementEndIndex = elementStartIndex + (element.outerHTML).indexOf(">") + 1;
+
+  // color suggestion test
+  // const suggestion = await getSuggestion(textColor)
+  // console.log(suggestion)
 
   // Only return the element if it has a color contrast issue
   if (elementStartIndex < 1 || elementEndIndex < 1) {
