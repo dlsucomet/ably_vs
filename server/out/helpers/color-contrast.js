@@ -135,19 +135,18 @@ function appendElement(level, contrast, element, document) {
   }
 }
 
+// Helper function for checkDocumentContrast to find the indexes of the element
 function getIndexes(element, html) {
-  // console.log(element)
   var indexes = []
   reg = new RegExp(element.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&').replace(/\s+/g, '\\s+'), 'g');
-  // console.log(reg)
   finding = [...html.matchAll(reg)];
-  // console.log(finding)
   finding.forEach(data => {
     indexes.push(data.index);
   })
   return indexes
 }
 
+// Helper function for checkDocumentContrast to find text in an element
 function isThereNoText (element) {
   for (let i = 0; i < element.childNodes.length; i++) {
     if (element.childNodes[i].nodeName == "#text" && !(element.childNodes[i].textContent).match(/^\s*$/)) return false;
@@ -241,8 +240,9 @@ function checkDocumentContrast(html) {
 	  "p, span, h1, h2, h3, h4, h5, h6, li, a, button, label, small, strong, em, div, td, th, caption"
 	);
 	
-  // Check the color contrast of each element
   let indexMap = {} // hashmap for duplicate elements
+  
+  // Check the color contrast of each element
   for (let i = 0; i < elements.length; i++) {
     // Checks if there is a text under the element, if not skips the process
     if (isThereNoText(elements[i])) continue;
