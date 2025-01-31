@@ -159,9 +159,9 @@ async function getSuggestion(textColor) {
   textColor = textColor.replace("#","")
   try {
     const response = await fetch (
-      "https://www.thecolorapi.com/id?hex=" + {textColor}
+      "https://www.thecolorapi.com/scheme?hex=" + textColor + "&mode=complement"
     );
-    return response.json
+    return response.json()
   } catch (error) {
     return `We cannot suggest a color`
   }
@@ -224,8 +224,10 @@ async function checkContrast(element, window, document, html, index) {
   const elementEndIndex = elementStartIndex + (element.outerHTML).indexOf(">") + 1;
 
   // color suggestion test
-  // const suggestion = await getSuggestion(textColor)
+  const suggestion = await getSuggestion(textColor)
   // console.log(suggestion)
+  // console.log(suggestion.colors[0].hex.value)
+  // console.log(suggestion.colors[0].rgb.value)
 
   // Only return the element if it has a color contrast issue
   if (elementStartIndex < 1 || elementEndIndex < 1) {
@@ -238,12 +240,13 @@ async function checkContrast(element, window, document, html, index) {
     return {
       contrastIssue: contrastIssue,
       start: elementStartIndex,
-      end: elementEndIndex         
+      end: elementEndIndex,
+      suggestion: suggestion.colors[0]
     };
   }
 }
 
-function checkDocumentContrast(html) {
+async function checkDocumentContrast(html) {
 	// List of all the color contrast issues
 	const colorContrastIssues = [];
 
@@ -275,7 +278,7 @@ function checkDocumentContrast(html) {
       indexMap[indexes] = 0
     }
 
-    colorContrastIssues.push(checkContrast(elements[i], window, document, html, indexes[index]))
+    colorContrastIssues.push(await checkContrast(elements[i], window, document, html, indexes[index]))
   }
 
   // Remove element if there is no contrast issue
