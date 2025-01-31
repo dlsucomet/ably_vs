@@ -64,12 +64,6 @@ function rgbToHex(rgb, type) {
   return `#${hexR}${hexG}${hexB}`;
 }
 
-function checkContrastRatio(color1, color2) {
-  // console.log("Calculating contrast ratio between:", color1, color2);
-  const contrastRatio = getContrastRatio(color1, color2); // is this redundant?
-  return contrastRatio;
-}
-
 function getFontSize(element, window) {
   const computedStyle = window.getComputedStyle(element);
   let size = computedStyle.getPropertyValue("font-size");
@@ -170,7 +164,7 @@ function checkContrast(element, window, document, html, index) {
   let bgColor = rgbToHex(window.getComputedStyle(actualBg).backgroundColor,"background");
   // console.log("Background color:", bgColor);
 
-  const contrastRatio = checkContrastRatio(textColor, bgColor);
+  const contrastRatio = getContrastRatio(textColor, bgColor);
   // console.log("Contrast ratio:", contrastRatio);
 
   // WCAG AA : 4.5 - Normal, 3 - Large
