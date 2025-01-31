@@ -225,11 +225,8 @@ async function checkContrast(element, window, document, html, index) {
   const elementStartIndex = index;
   const elementEndIndex = elementStartIndex + (element.outerHTML).indexOf(">") + 1;
 
-  // color suggestion test
+  // color suggestion
   const suggestion = await getSuggestion(textColor)
-  // console.log(suggestion)
-  // console.log(suggestion.colors[0].hex.value)
-  // console.log(suggestion.colors[0].rgb.value)
 
   // Only return the element if it has a color contrast issue
   if (elementStartIndex < 1 || elementEndIndex < 1) {
