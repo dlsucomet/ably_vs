@@ -32,16 +32,6 @@ function parseColor(color) {
   if (hexMatch) {
     return hexMatch.slice(1).map((c) => parseInt(c, 16));
   }
-  const rgbMatch = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-  if (rgbMatch) {
-    return rgbMatch.slice(1).map((c) => parseInt(c, 10));
-  }
-  const rgbaMatch = color.match(
-    /^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9]*[.])?[0-9]+\)$/
-  );
-  if (rgbaMatch) {
-    return rgbaMatch.slice(1, 4).map((c) => parseInt(c, 10));
-  }
   throw new Error("Invalid color format: " + color);
 }
 
@@ -202,7 +192,7 @@ function checkContrast(element, window, document, html, index) {
   // const elementStartIndex = index + (element.outerHTML).lastIndexOf(">" + element.textContent) + 1;
   // const elementEndIndex = elementStartIndex + element.textContent.length;
   const elementStartIndex = index + 1;
-  const elementEndIndex = elementStartIndex + (element.outerHTML).indexOf(">");
+  const elementEndIndex = elementStartIndex + (element.outerHTML).indexOf(">") - 1;
 
   // Only return the element if it has a color contrast issue
   if (elementStartIndex < 1 || elementEndIndex < 1) {
