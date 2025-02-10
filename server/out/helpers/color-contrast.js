@@ -163,7 +163,7 @@ async function getSuggestion(textColor) {
     );
     data = await response.json()
     console.log(data)
-    return "Use the color \"" + data.colors[0].name.value + "\" for the text. Hex value = " + data.colors[0].hex.value
+    return `Use the color ${data.colors[0].name.value} for the text. Hex value = ${data.colors[0].hex.value}`
   } catch (error) {
     return `We cannot suggest a color`
   }
