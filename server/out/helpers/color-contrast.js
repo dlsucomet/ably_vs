@@ -32,16 +32,6 @@ function parseColor(color) {
   if (hexMatch) {
     return hexMatch.slice(1).map((c) => parseInt(c, 16));
   }
-  const rgbMatch = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-  if (rgbMatch) {
-    return rgbMatch.slice(1).map((c) => parseInt(c, 10));
-  }
-  const rgbaMatch = color.match(
-    /^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9]*[.])?[0-9]+\)$/
-  );
-  if (rgbaMatch) {
-    return rgbaMatch.slice(1, 4).map((c) => parseInt(c, 10));
-  }
   throw new Error("Invalid color format: " + color);
 }
 
@@ -62,12 +52,6 @@ function rgbToHex(rgb, type) {
   const hexG = parseInt(g, 10).toString(16).padStart(2, "0");
   const hexB = parseInt(b, 10).toString(16).padStart(2, "0");
   return `#${hexR}${hexG}${hexB}`;
-}
-
-function checkContrastRatio(color1, color2) {
-  // console.log("Calculating contrast ratio between:", color1, color2);
-  const contrastRatio = getContrastRatio(color1, color2); // is this redundant?
-  return contrastRatio;
 }
 
 function getFontSize(element, window) {
@@ -135,19 +119,18 @@ function appendElement(level, contrast, element, document) {
   }
 }
 
+// Helper function for checkDocumentContrast to find the indexes of the element
 function getIndexes(element, html) {
-  // console.log(element)
   var indexes = []
   reg = new RegExp(element.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&').replace(/\s+/g, '\\s+'), 'g');
-  // console.log(reg)
   finding = [...html.matchAll(reg)];
-  // console.log(finding)
   finding.forEach(data => {
     indexes.push(data.index);
   })
   return indexes
 }
 
+// Helper function for checkDocumentContrast to find text in an element
 function isThereNoText (element) {
   for (let i = 0; i < element.childNodes.length; i++) {
     if (element.childNodes[i].nodeName == "#text" && !(element.childNodes[i].textContent).match(/^\s*$/)) return false;
@@ -185,7 +168,7 @@ async function checkContrast(element, window, document, html, index) {
   let bgColor = rgbToHex(window.getComputedStyle(actualBg).backgroundColor,"background");
   // console.log("Background color:", bgColor);
 
-  const contrastRatio = checkContrastRatio(textColor, bgColor);
+  const contrastRatio = getContrastRatio(textColor, bgColor);
   // console.log("Contrast ratio:", contrastRatio);
 
   // WCAG AA : 4.5 - Normal, 3 - Large
@@ -222,8 +205,8 @@ async function checkContrast(element, window, document, html, index) {
   // Find the index of the element's HTML within the document's HTML
   // const elementStartIndex = index + (element.outerHTML).lastIndexOf(">" + element.textContent) + 1;
   // const elementEndIndex = elementStartIndex + element.textContent.length;
-  const elementStartIndex = index;
-  const elementEndIndex = elementStartIndex + (element.outerHTML).indexOf(">") + 1;
+  const elementStartIndex = index + 1;
+  const elementEndIndex = elementStartIndex + (element.outerHTML).indexOf(">") - 1;
 
   // color suggestion
   const suggestion = await getSuggestion(textColor)
@@ -260,8 +243,9 @@ async function checkDocumentContrast(html) {
 	  "p, span, h1, h2, h3, h4, h5, h6, li, a, button, label, small, strong, em, div, td, th, caption"
 	);
 	
-  // Check the color contrast of each element
   let indexMap = {} // hashmap for duplicate elements
+  
+  // Check the color contrast of each element
   for (let i = 0; i < elements.length; i++) {
     // Checks if there is a text under the element, if not skips the process
     if (isThereNoText(elements[i])) continue;
