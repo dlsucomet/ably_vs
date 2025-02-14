@@ -1,4 +1,5 @@
 const { JSDOM } = require("jsdom");
+const { type } = require("os");
 const defaultFontColor = "#000000"; // Black
 const defaultBackgroundColor = "#ffffff"; // White
 
@@ -156,11 +157,12 @@ async function getColorScheme(window, document) {
   
 // Gives either white or black text color as the suggestion
 function getTextColorSuggestion(bgColor) {
+  console.log(bgColor)
   let result = ""
   let color = ""
-  whiteValue = getContrastRatio(bgColor, "#ffffff");
-  blackValue = getContrastRatio(bgColor, "#000000");
-
+  whiteValue = parseFloat(getContrastRatio(bgColor, "#ffffff"));
+  blackValue = parseFloat(getContrastRatio(bgColor, "#000000"));
+  
   if (whiteValue > blackValue) {
     result = whiteValue;
     color = "white"
