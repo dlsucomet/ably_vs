@@ -70,6 +70,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 let score = 0;
 let dataLength = 0;
+let scheme = []
 
 class ColorsViewProvider implements vscode.WebviewViewProvider {
 
@@ -118,6 +119,9 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
 
             if (status == "loaded") {
                 score = receivedData.pop();
+                scheme = receivedData.pop()
+                console.log(scheme)
+                
 
                 let messageArray = [];
                 messageArray = receivedData.map(item => item.relatedInformation[0].message);
@@ -156,6 +160,12 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
                 const cssFilePath = path.join(__dirname, '..', 'src', 'templates', 'styles.css');
                 const cssContent = fs.readFileSync(cssFilePath, 'utf8');
 
+                const bgColors = scheme.map(color => color.name).join("_");
+                const hexs = scheme.map(color => color.hex).join("_");
+                const textColors = scheme.map(color => color.textColor).join("_")
+                console.log(bgColors);
+                console.log(hexs)
+
                 htmlContent = htmlContent
                     .replace('{{score}}', score.toString())
                     .replace('{{dataLength}}', dataLength.toString())
@@ -164,8 +174,12 @@ class ColorsViewProvider implements vscode.WebviewViewProvider {
                     .replace('{{lineArray}}', linesString)
                     .replace('{{stringArray}}', stringArray)
                     .replace('{{styles}}', `<style>${cssContent}</style>`)
-                    .replace('{{htmlChecked}}', htmlChecked);
+                    .replace('{{htmlChecked}}', htmlChecked)
+                    .replace('{{schemeBgColor}}', bgColors)
+                    .replace('{{schemeHex}}', hexs)
+                    .replace('{{schemeTextColors}}', textColors)
                 
+
                 return htmlContent;
             } else if (status == "loading") {
                 const htmlFilePath = path.join(__dirname, '..', 'src', 'templates', 'loading.html');

@@ -58,6 +58,7 @@ async function activate(context) {
 exports.activate = activate;
 let score = 0;
 let dataLength = 0;
+let scheme = [];
 class ColorsViewProvider {
     constructor(_extensionUri) {
         this._extensionUri = _extensionUri;
@@ -94,6 +95,8 @@ class ColorsViewProvider {
             }
             if (status == "loaded") {
                 score = receivedData.pop();
+                scheme = receivedData.pop();
+                console.log(scheme);
                 let messageArray = [];
                 messageArray = receivedData.map(item => item.relatedInformation[0].message);
                 let lineArray = [];
@@ -126,6 +129,11 @@ class ColorsViewProvider {
                 let htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
                 const cssFilePath = path.join(__dirname, '..', 'src', 'templates', 'styles.css');
                 const cssContent = fs.readFileSync(cssFilePath, 'utf8');
+                const bgColors = scheme.map(color => color.name).join("_");
+                const hexs = scheme.map(color => color.hex).join("_");
+                const textColors = scheme.map(color => color.textColor).join("_");
+                console.log(bgColors);
+                console.log(hexs);
                 htmlContent = htmlContent
                     .replace('{{score}}', score.toString())
                     .replace('{{dataLength}}', dataLength.toString())
@@ -134,7 +142,10 @@ class ColorsViewProvider {
                     .replace('{{lineArray}}', linesString)
                     .replace('{{stringArray}}', stringArray)
                     .replace('{{styles}}', `<style>${cssContent}</style>`)
-                    .replace('{{htmlChecked}}', htmlChecked);
+                    .replace('{{htmlChecked}}', htmlChecked)
+                    .replace('{{schemeBgColor}}', bgColors)
+                    .replace('{{schemeHex}}', hexs)
+                    .replace('{{schemeTextColors}}', textColors);
                 return htmlContent;
             }
             else if (status == "loading") {

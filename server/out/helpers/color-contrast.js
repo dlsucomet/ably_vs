@@ -138,21 +138,41 @@ function isThereNoText (element) {
   return true
 }
 
-async function getSuggestion(textColor) {
-  textColor = textColor.replace("#","")
+// Get color scheme given a color
+async function getColorScheme(window, document) {
+  var bgColor = window.getComputedStyle(document.body).backgroundColor
+  bgColor = rgbToHex(bgColor).replace("#","")
   try {
     const response = await fetch (
-      "https://www.thecolorapi.com/scheme?hex=" + textColor + "&mode=complement"
+      "https://www.thecolorapi.com/scheme?hex=" + bgColor + "&mode=complement"
     );
-    data = await response.json()
-    console.log(data)
-    return `Use the color ${data.colors[0].name.value} for the text. Hex value = ${data.colors[0].hex.value}`
+    const data = await response.json()
+    return data.colors
   } catch (error) {
-    return `We cannot suggest a color`
+    console.log(error)
+    return [];
   }
 }
   
-async function checkContrast(element, window, document, html, index) {
+// Gives either white or black text color as the suggestion
+function getTextColorSuggestion(bgColor) {
+  let result = ""
+  let color = ""
+  whiteValue = getContrastRatio(bgColor, "#ffffff");
+  blackValue = getContrastRatio(bgColor, "#000000");
+
+  if (whiteValue > blackValue) {
+    result = whiteValue;
+    color = "white"
+  } else {
+    result = blackValue
+    color = "black"
+  }
+
+  return color
+}
+
+function checkContrast(element, window, document, html, index) {
   let contrastIssue = "";
   // console.log("Checking contrast for element:", element.className);
   // Get the text and background colors of an element
@@ -175,6 +195,8 @@ async function checkContrast(element, window, document, html, index) {
   // WCAG AAA : 7 - Normal, 4.5 - Large
   
   // console.log("Font Size: ", getFontSize(element, window));
+  const color = getTextColorSuggestion(bgColor);
+  const suggestion = `Use the color ${color} for the text`
 
   if (getFontSize(element, window) < 24) {
     // Normal Size
@@ -207,10 +229,7 @@ async function checkContrast(element, window, document, html, index) {
   // const elementEndIndex = elementStartIndex + element.textContent.length;
   const elementStartIndex = index + 1;
   const elementEndIndex = elementStartIndex + (element.outerHTML).indexOf(">") - 1;
-
-  // color suggestion
-  const suggestion = await getSuggestion(textColor)
-
+  
   // Only return the element if it has a color contrast issue
   if (elementStartIndex < 1 || elementEndIndex < 1) {
     return {
@@ -262,7 +281,7 @@ async function checkDocumentContrast(html) {
       indexMap[indexes] = 0
     }
 
-    colorContrastIssues.push(await checkContrast(elements[i], window, document, html, indexes[index]))
+    colorContrastIssues.push(checkContrast(elements[i], window, document, html, indexes[index]))
   }
 
   // Remove element if there is no contrast issue
@@ -271,8 +290,14 @@ async function checkDocumentContrast(html) {
       colorContrastIssues.splice(i, 1);
     }
   }
+
+  var colorScheme = (await getColorScheme(window, document)).map(color => ({
+    name: color.name.value, 
+    hex: color.hex.value, 
+    textColor: getTextColorSuggestion(color.hex.value)}))
+  colorContrastIssues.push(colorScheme);
   
 	return colorContrastIssues;
 }
 
-module.exports = {checkDocumentContrast, getContrastRatio };
+module.exports = {checkDocumentContrast };
