@@ -291,10 +291,20 @@ async function checkDocumentContrast(html) {
     }
   }
 
-  var colorScheme = (await getColorScheme(window, document)).map(color => ({
+  // Getting color scheme
+  var colorData = await getColorScheme(window, document)
+
+  // Filter out duplicates
+  const names = colorData.map((item) => item.name.value)
+  colorData = colorData.filter((item, index) => !names.includes(item.name.value, index + 1))
+
+  // reformat data being passed
+  const colorScheme = (colorData).map(color => ({
     name: color.name.value, 
     hex: color.hex.value, 
     textColor: getTextColorSuggestion(color.hex.value)}))
+
+  // pass color scheme to server
   colorContrastIssues.push(colorScheme);
   
 	return colorContrastIssues;
