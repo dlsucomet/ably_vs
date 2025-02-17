@@ -157,7 +157,6 @@ async function getColorScheme(window, document) {
   
 // Gives either white or black text color as the suggestion
 function getTextColorSuggestion(bgColor) {
-  console.log(bgColor)
   let result = ""
   let color = ""
   whiteValue = parseFloat(getContrastRatio(bgColor, "#ffffff"));
@@ -293,21 +292,25 @@ async function checkDocumentContrast(html) {
     }
   }
 
-  // Getting color scheme
-  var colorData = await getColorScheme(window, document)
+  // Check if there is issues before getting color scheme
+  if (colorContrastIssues.length != 0) {
+    // Getting color scheme
+    var colorData = await getColorScheme(window, document)
 
-  // Filter out duplicates
-  const names = colorData.map((item) => item.name.value)
-  colorData = colorData.filter((item, index) => !names.includes(item.name.value, index + 1))
+    // Filter out duplicates
+    const names = colorData.map((item) => item.name.value)
+    colorData = colorData.filter((item, index) => !names.includes(item.name.value, index + 1))
 
-  // reformat data being passed
-  const colorScheme = (colorData).map(color => ({
-    name: color.name.value, 
-    hex: color.hex.value, 
-    textColor: getTextColorSuggestion(color.hex.value)}))
+    // reformat data being passed
+    const colorScheme = (colorData).map(color => ({
+      hex: color.hex.value, 
+      textColor: getTextColorSuggestion(color.hex.value)}))
 
-  // pass color scheme to server
-  colorContrastIssues.push(colorScheme);
+    // pass color scheme to server
+    colorContrastIssues.push(colorScheme);
+  } else {
+    colorContrastIssues.push([])
+  }
   
 	return colorContrastIssues;
 }

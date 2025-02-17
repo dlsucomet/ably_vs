@@ -115,8 +115,11 @@
                 </div>
             </div>
             <div id="scheme">
-                
-                <span class="colorScheme">Color Scheme Suggestion</span>
+                <h2 id="colorScheme"></h2>
+                <table id="colorSuggestions">
+
+                </table>
+
             </div>
         </div>
     </div>
@@ -151,21 +154,22 @@
         ablyScore.innerHTML = scorePercent;
 
         // Color Scheme Names of colors and their hex values
-        let colorScheme = "{{schemeBgColor}}".split("_");
         let colorSchemeHex = "{{schemeHex}}".split("_");
         let colorSchemeText = "{{schemeTextColors}}".split("_")
-        console.log(colorScheme);
 
-        const container = document.getElementById("scheme");
-        var newSpan
-        for (let i = 0; i < colorScheme.length; i++) {
-            newSpan = document.createElement("span");
-            newSpan.classList.add = "colors";
-            newSpan.innerHTML = colorScheme[i];
-            newSpan.style.backgroundColor = colorSchemeHex[i];
-            newSpan.style.color = colorSchemeText[i];
-            container.appendChild(document.createElement("br"));
-            container.appendChild(newSpan);
+        if (colorSchemeHex[0].length != 0) {
+            document.getElementById("colorScheme").innerHTML = "Color Scheme Suggestion"
+            const table = document.getElementById("colorSuggestions");
+            let row
+            let cell 
+            for (let i = 0; i < colorSchemeHex.length; i++) {
+                row = table.insertRow(0);
+                cell = row.insertCell(0);
+                cell.classList.add("colors");
+                cell.innerHTML = colorSchemeHex[i];
+                cell.style.backgroundColor = colorSchemeHex[i];
+                cell.style.color = colorSchemeText[i];
+            }
         }
 
         let suggestions = 0;
