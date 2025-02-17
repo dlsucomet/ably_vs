@@ -148,7 +148,18 @@ async function getColorScheme(window, document) {
       "https://www.thecolorapi.com/scheme?hex=" + bgColor + "&mode=complement"
     );
     const data = await response.json()
-    return data.colors
+    var colorData = data.colors
+
+    // Filter out duplicates
+    const names = colorData.map((item) => item.name.value)
+    colorData = colorData.filter((item, index) => !names.includes(item.name.value, index + 1))
+
+    // reformat data being passed
+    const colorScheme = (colorData).map(color => ({
+      hex: color.hex.value, 
+      textColor: getTextColorSuggestion(color.hex.value)}))
+
+    return colorScheme
   } catch (error) {
     console.log(error)
     return [];
@@ -295,18 +306,8 @@ async function checkDocumentContrast(html) {
   // Check if there is issues before getting color scheme
   if (colorContrastIssues.length != 0) {
     // Getting color scheme
-    var colorData = await getColorScheme(window, document)
-
-    // Filter out duplicates
-    const names = colorData.map((item) => item.name.value)
-    colorData = colorData.filter((item, index) => !names.includes(item.name.value, index + 1))
-
-    // reformat data being passed
-    const colorScheme = (colorData).map(color => ({
-      hex: color.hex.value, 
-      textColor: getTextColorSuggestion(color.hex.value)}))
-
-    // pass color scheme to server
+    var colorScheme = await getColorScheme(window, document)
+    // Adding color scheme to colorContractIssues to be passed to the server
     colorContrastIssues.push(colorScheme);
   } else {
     colorContrastIssues.push([])
