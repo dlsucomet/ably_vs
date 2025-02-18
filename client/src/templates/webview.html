@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href='https://fonts.googleapis.com/css?family=DM Sans' rel='stylesheet'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{styles}}
+</head>
+<body>
+    <div class="content">
+        <div class="title-sec">
+            <div class="logo">
+            <img src="https://i.ibb.co/h1MSWN9/ABLY-Logo-Primary-3x.png" alt="Ably logo.png" border="0" style="width: 1em"/>
+                <p class="title-name"> Ab.ly </p>
+                <div class="ably-score">
+                    <div class="ably-score-circle">
+                        <span class="ably-score-value">-</span> <span style="color:black; font-size: 12px">%</span>
+                    </div>
+            	</div>
+            </div>
+            <h1> Accessibility Insights <br> for <b>{{htmlChecked}}</b></h1>
+        </div>
+        <div class="suggestSection">
+            <div class="allSuggest">
+                <span class="suggestTitle"> All Suggestions </span>
+                <div class="suggestNum"><span id="dataContainer" class="noSuggest"></span></div>
+            </div>
+            <div   class="categoryDiv">
+                <div class="checkWrap">
+                    <div class="titleWrap">
+                        <span class="titleCheck"> Perceivable </span>
+                        <span id ="pAlert" class="alertCheck">0 alerts</span>
+                    </div>
+                    <svg  onclick="pClick()" id="pchevDown" class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path id="chevpath" d="M9 1.32257L5 5.32257L1 1.32257" stroke="white" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div id="perceive" class="suggestListDiv">
+                    <div class="suggestList">
+                        <span class="list">An error occurred. Please try again.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="categoryDiv">
+                <div class="checkWrap">
+                    <div class="titleWrap">
+                        <span class="titleCheck">Operable</span>
+                        <span id ="oAlert" class="alertCheck">0 alerts</span>
+                    </div>
+                    <svg  onclick="oClick()" id="ochevDown" class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path id="chevpath" d="M9 1.32257L5 5.32257L1 1.32257" stroke="white" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div id="operable" class="suggestListDiv">
+                    <div class="suggestList">
+                        <span class="list">An error occurred. Please try again.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="categoryDiv">
+                <div class="checkWrap">
+                    <div class="titleWrap">
+                        <span class="titleCheck"> Understandable </span>
+                        <span id ="uAlert" class="alertCheck">0 alerts </span>
+                    </div>
+                    <svg  onclick="uClick()" id="uchevDown"  class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path id="chevpath" d="M9 1.32257L5 5.32257L1 1.32257" stroke="white" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div id="understand" class="suggestListDiv">
+                    <div class="suggestList">
+                        <span class="list"> An error occurred. Please try again.</span>
+                    </div>
+                </div>
+            </div>
+            <div  class="categoryDiv">
+                <div class="checkWrap">
+                    <div class="titleWrap">
+                        <span class="titleCheck"> Robust </span>
+                        <span id ="rAlert" class="alertCheck">0 alerts</span>
+                    </div>
+                    <svg   onclick="rClick()" id="rchevDown"  class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path id="chevpath" d="M9 1.32257L5 5.32257L1 1.32257" stroke="white" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div id="robust" class="suggestListDiv">
+                    <div class="suggestList">
+                        <span class="list">An error occurred. Please try again.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="categoryDiv">
+                <div class="checkWrap">
+                    <div class="titleWrap">
+                        <span class="titleCheck"> Contrast </span>
+                        <span id ="cAlert" class="alertCheck">0 alerts</span>
+                    </div>
+                    <svg  onclick="cClick()" id="cchevDown" class="chevronDown" width="10" height="7" viewBox="0 0 10 7" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path id="chevpath" d="M9 1.32257L5 5.32257L1 1.32257" stroke="white" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div id="contrast" class="suggestListDiv">
+                    <div class="suggestList">
+                        <span class="list">An error occurred. Please try again.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Total of Errors
+        let ErrorTotal = parseInt("{{dataLength}}", 10);
+
+        // Total of Elements and their Scoring
+        let totalScore = parseInt("{{score}}", 10);
+
+        // Final Score Percentage
+        let scorePercent = 100.00 - Math.round((ErrorTotal / totalScore) * 100);
+        if (scorePercent < 0) {
+        scorePercent = 0;
+        }
+
+        const scoreCircle = document.querySelector('.ably-score-circle');
+
+
+        if (scorePercent >= 71) {
+            scoreCircle.style.backgroundColor = '#02BA00'; // Green
+        } else if (scorePercent >= 30 && scorePercent <= 70) {
+            scoreCircle.style.backgroundColor = '#FFCF02'; 
+        } else {
+            scoreCircle.style.backgroundColor = '#FF1E0E'; 
+        }
+
+        // Get the ably score element
+        var ablyScore = document.querySelector('.ably-score-value');
+
+        // Set the score value
+        ablyScore.innerHTML = scorePercent;
+
+        let suggestions = 0;
+
+        let guideString = "{{guidelinesString}}";
+		// Remove the brackets from the string
+		guideString = guideString.substring(1, guideString.length - 1);
+        const guideArray = guideString.split(' + ');
+
+        let newString = "{{stringArray}}"; 
+		const backToArray = newString.split(' + ');
+
+        let lineArray = "{{lineArray}}";
+        const linesInArray = lineArray.split(' + ');
+
+        let lineLinks = "{{lineLinks}}";
+        const lineLinksInArray = lineLinks.split(' + ');
+
+		// Replace special characters with their respective HTML entities
+		backToArray.forEach((item, index) => {
+			backToArray[index] = item.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		});
+
+        let onetext = "";
+        let twotext = "";
+        let threetext = "";
+        let text = "";
+        let contrasttext = "";
+        let numErrors = ""; 
+        let errors = [];
+        let num="";
+        let num2="";
+
+        let num3="";
+
+        let num4="";
+        let num5="";
+
+        errors = backToArray;
+        let x = 0;
+        let x2 = 0;
+        let x3 = 0;
+        let x4 = 0;
+        let x5 = 0;
+
+        errors.forEach(addError);
+
+        document.getElementById("perceive").innerHTML = onetext;
+        document.getElementById("operable").innerHTML = twotext;
+        document.getElementById("understand").innerHTML = threetext;
+        document.getElementById("robust").innerHTML = text;
+        document.getElementById("contrast").innerHTML = contrasttext;
+        document.getElementById("pAlert").innerHTML =  num;
+        document.getElementById("rAlert").innerHTML =  num2;
+        document.getElementById("oAlert").innerHTML =  num3;
+        document.getElementById("uAlert").innerHTML = num4;
+        document.getElementById("cAlert").innerHTML = num5;
+
+        function getLink(guidelineArray) {
+            const linkDictionary = {
+                "1.1.1": "https://www.notion.so/ably-extension/1-1-1-Non-text-Content-cad5db53595e4d29a25a63c98bbc55ee?pvs=4",
+                "1.3.1": "https://www.notion.so/ably-extension/1-3-1-Info-and-Relationships-e0872a3c4b4a400291bcc43cbf36c4b9?pvs=4",
+                "1.3.4": "https://www.notion.so/ably-extension/1-3-4-Orientation-1f263a2d4e4540629c5ab9b39bd8fcb8?pvs=4",
+                "1.3.5": "https://www.notion.so/ably-extension/1-3-5-Identify-Input-Purpose-ae4dde5698c24a75a9be370b7ce493dd?pvs=4",
+                "1.4.4": "https://www.notion.so/ably-extension/1-4-4-Resize-Text-574323ba7a6d49e4bfb795c6e579d889?pvs=4",
+                "2.1.1": "https://www.notion.so/ably-extension/2-1-1-Keyboard-cb22702c2bd14624976cc86f45dbcdbe?pvs=4",
+                "2.4.2": "https://www.notion.so/ably-extension/2-4-2-Page-Titled-f5baad753ad94708acbdd9c71e797860?pvs=4",
+                "2.4.4": "https://www.notion.so/ably-extension/2-4-4-Link-Purpose-In-Context-a90dbb2d54434f22a2703aabd066d330?pvs=4",
+                "2.4.6": "https://www.notion.so/ably-extension/2-4-6-Headings-and-Labels-bd2bc9f9a93a4921bb59865a01f97e67?pvs=4",
+                "2.4.10": "https://www.notion.so/ably-extension/2-4-10-Section-Headings-06884c970b054da5bdc703843e47b77b?pvs=4",
+                "2.5.3": "https://www.notion.so/ably-extension/2-5-3-Label-in-Name-4f6b277b327f490f8b7437b8d57f3ed5?pvs=4",
+                "3.1.1": "https://www.notion.so/ably-extension/3-1-1-Language-of-Page-de12f51107464b75bdc7422ffbdf785b?pvs=4",
+                "3.2.2": "https://www.notion.so/ably-extension/3-2-2-On-Input-4031ddf46fe14a449027471d8322c65e?pvs=4",
+                "3.3.2": "https://www.notion.so/ably-extension/3-3-2-Labels-or-Instructions-b3d23746d5974666a190e24c6e2cd435?pvs=4",
+                "4.1.1": "https://www.notion.so/ably-extension/4-1-1-Parsing-ee9d4b0a991a4448b87b82c1dd8a2f5f?pvs=4",
+                "4.1.2": "https://www.notion.so/ably-extension/4-1-2-Name-Role-Value-bc37ee404e244f5f8a99446e3394fb46?pvs=4",
+                "4.1.3": "https://www.notion.so/ably-extension/4-1-3-Status-Messages-1f0c9504dd354e75825d1557af3721ea?pvs=4"
+            };
+            return linkDictionary[guidelineArray] || "https://www.notion.so/ably-extension/Guidelines-6c6bf966a38c4f4c8ae95f6d4c421c44";
+        }
+
+        function addError(item, index) {
+            let line = "<a class='line-link' href='" + lineLinksInArray[index] + "'>Line " + linesInArray[index] + "</a>: ";
+            if (guideArray[index].startsWith('C')) {
+                // console.log("item in C = " + item);
+                contrasttext += "<span class="+ "list" +">"+ line + item + " Learn more about SC <a href='https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html'>1.4.3</a> and <a href='https://www.w3.org/WAI/WCAG21/Understanding/contrast-enhanced'>1.4.6</a></span>";
+                x5++
+                suggestions++;
+            } else if (item !== "") {
+                const links = guideArray[index].split(', ');
+                // console.log(links);
+                
+                const anchors = links.map(getLink);
+                // console.log(anchors);
+
+                links.forEach((link, i) => {
+                    // console.log(link, i);
+                    if (link.startsWith('1')){
+                        onetext += "<span class="+ "list" +">"+ line + item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        x++
+                        // console.log("item in 1 = " + item);
+                    }
+                    else if (link.startsWith('2')){
+                        twotext += "<span class="+ "list" +">"+ line + item + " <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        x2++    
+                    }
+                    else if (link.startsWith('3')){
+                        threetext += "<span class="+ "list" +">"+ line + item + "<a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        x3++
+                    }
+                    else if (link.startsWith('4')){
+                        text += "<span class="+ "list" +">"+ line + item + "  <a href='" + anchors[i]+ "'>Learn more about SC " + link  +"</a> </span>";
+                        x4++
+                    }
+                    suggestions++;
+                });
+            }
+        }
+        
+
+        document.getElementById("uAlert").innerHTML = x3 < 2 ? x3 + " alert" : x3 + " alerts";
+        document.getElementById("pAlert").innerHTML = x < 2 ? x + " alert" : x + " alerts";
+        document.getElementById("oAlert").innerHTML = x2 < 2 ? x2 + " alert" : x2 + " alerts";
+        document.getElementById("rAlert").innerHTML = x4 < 2 ? x4 + " alert" : x4 + " alerts";
+        document.getElementById("cAlert").innerHTML = x5 < 2 ? x5 + " alert" : x5 + " alerts";
+        document.getElementById("dataContainer").innerHTML = suggestions;
+
+
+		function pClick() {
+			var x = document.getElementById("perceive");
+			if (x.style.display === "none") {
+			  x.style.display = "";
+            document.getElementById("pchevDown").style.transform="rotate(180deg)"
+			} else {
+			  x.style.display = "none";
+              document.getElementById("pchevDown").style.transform = "rotate(360deg)"
+			}
+		  }
+
+          function oClick() {
+			var x = document.getElementById("operable");
+
+			if (x.style.display === "none") {
+                document.getElementById("ochevDown").style.transform="rotate(180deg)"
+
+			  x.style.display = "";
+			} else {
+                document.getElementById("ochevDown").style.transform = "rotate(360deg)"
+			  x.style.display = "none";
+			}
+		  }
+
+         
+          function uClick() {
+			var x = document.getElementById("understand");
+			if (x.style.display === "none") {
+			  x.style.display = "";
+
+            document.getElementById("uchevDown").style.transform="rotate(180deg)"
+			} else {
+                document.getElementById("uchevDown").style.transform = "rotate(360deg)"
+			  x.style.display = "none";
+			}
+		  }
+
+          
+          function rClick() {
+			var x = document.getElementById("robust");
+
+			if (x.style.display === "none") {
+
+            document.getElementById("rchevDown").style.transform="rotate(180deg)"
+			  x.style.display = "";
+			} else {
+                document.getElementById("rchevDown").style.transform = "rotate(360deg)"
+			  x.style.display = "none";
+			}
+		  }
+
+          function cClick() {
+            var x = document.getElementById("contrast");
+
+            if (x.style.display === "none") {
+                document.getElementById("cchevDown").style.transform="rotate(180deg)"
+              x.style.display = "";
+            } else {
+                document.getElementById("cchevDown").style.transform = "rotate(360deg)"
+              x.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
