@@ -208,7 +208,7 @@ function checkContrast(element, window, document, html, index) {
   
   // console.log("Font Size: ", getFontSize(element, window));
   const color = getTextColorSuggestion(bgColor);
-  const suggestion = `Use the color ${color} for the text`
+  const suggestion = `Use the color ${color} for the text.`
 
   if (getFontSize(element, window) < 24) {
     // Normal Size

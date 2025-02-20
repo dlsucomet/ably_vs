@@ -116,6 +116,7 @@
             </div>
             <div id="scheme">
                 <h2 id="colorScheme"></h2>
+                <h3 id="colorSchemeNote"></h3>
                 <table id="colorSuggestions">
 
                 </table>
@@ -159,6 +160,7 @@
 
         if (colorSchemeHex[0].length != 0) {
             document.getElementById("colorScheme").innerHTML = "Color Scheme Suggestion"
+            document.getElementById("colorSchemeNote").innerHTML = "These are suggestions which you could apply for background and its respective text color"
             const table = document.getElementById("colorSuggestions");
             let row
             let cell 
