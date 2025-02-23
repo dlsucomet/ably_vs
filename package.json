@@ -92,8 +92,10 @@
   "dependencies": {
     "@pamkirsten/html-validator": "^6.0.1",
     "ABLY": "file:",
+    "body-parser": "^1.20.3",
     "color-contrast-checker": "^2.1.0",
     "dotenv": "^16.4.5",
+    "express": "^4.21.2",
     "jsdom": "^25.0.0"
   }
 }

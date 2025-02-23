@@ -50,8 +50,8 @@ async function suggestAltText(imgPath) {
       .replace("araffed ", "")
 	  generatedCaption = generatedCaption.charAt(0).toUpperCase() + generatedCaption.slice(1);
 	  // Return the alt text as a string of the img tag
-	  // return `: <img src='${imgPath}' alt='${generatedCaption}'>`;
-    return generatedCaption
+	  // return `: <img src='${imgPath}' alt='${generatedCaption}'>`; // Original return
+    return generatedCaption // For testing purposes
   } catch (error) {
     // If the image is not supported
     return `. Unfortunately, we cannot recommend an alt-text for this image.`
