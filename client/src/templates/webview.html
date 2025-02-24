@@ -160,7 +160,7 @@
 
         if (colorSchemeHex[0].length != 0) {
             document.getElementById("colorScheme").innerHTML = "Color Scheme Suggestion"
-            document.getElementById("colorSchemeNote").innerHTML = "These are suggestions which you could apply for background and its respective text color"
+            document.getElementById("colorSchemeNote").innerHTML = "These are general suggestions which you could apply for any on the elements"
             const table = document.getElementById("colorSuggestions");
             let row
             let cell 
@@ -168,7 +168,7 @@
                 row = table.insertRow(0);
                 cell = row.insertCell(0);
                 cell.classList.add("colors");
-                cell.innerHTML = colorSchemeHex[i];
+                cell.innerHTML = `Background = ${colorSchemeHex[i]} <br> Text = ${colorSchemeText[i]}`;
                 cell.style.backgroundColor = colorSchemeHex[i];
                 cell.style.color = colorSchemeText[i];
             }
