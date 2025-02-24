@@ -111,7 +111,7 @@ const processW3C = require("./validators/w3c");
 const processWHATWG = require("./validators/whatwg");
 const processContrast = require("./validators/contrast");
 const countAttributes = require("./helpers/count-attributes");
-const checkDocumentContrast = require("./helpers/color-contrast");
+const { checkDocumentContrast } = require("./helpers/color-contrast");
 
 async function validateTextDocument(textDocument) {
   // In this simple example we get the settings for every validate run.
@@ -135,6 +135,7 @@ async function validateTextDocument(textDocument) {
   WHATWGresult.errors.forEach((msg) => processWHATWG(msg, diagnostics, problems, settings, textDocument, hasDiagnosticRelatedInformationCapability))
   // Color Contrast
   const contrastIssues = checkDocumentContrast(textDocument._content);
+  console.log(contrastIssues)
   contrastIssues.forEach((msg) => processContrast(msg, diagnostics, problems, settings, textDocument, hasDiagnosticRelatedInformationCapability));
   // Sort the diagnostics by start's line number > column number > end's line number > column number > source
   diagnostics.sort((a, b) => 
