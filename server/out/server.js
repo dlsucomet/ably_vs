@@ -157,7 +157,9 @@ async function validateTextDocument(textDocument) {
   diagnostics.push(scheme)
 
   // Add the score to the diagnostics and send it to the client
+  // console.log(text)
   const score = countAttributes(text);
+  // console.log(score)
   diagnostics.push(score);
   connection.sendNotification("custom/loadFiles", diagnostics);
 }

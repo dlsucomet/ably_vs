@@ -38,6 +38,9 @@ function parseColor(color) {
 
 function rgbToHex(rgb, type) {
   // console.log("Converting RGB to Hex:", rgb);
+  if (rgb == "rgba(0, 0, 0, 0)") {
+    return defaultBackgroundColor
+  }
   const match = rgb.match(/(\d+),\s*(\d+),\s*(\d+)/);
   if (!match) {
     if (type === "text") {
@@ -142,7 +145,8 @@ function isThereNoText (element) {
 // Get color scheme given a color
 async function getColorScheme(window, document) {
   var bgColor = window.getComputedStyle(document.body).backgroundColor
-  bgColor = rgbToHex(bgColor).replace("#","")
+  bgColor = rgbToHex(bgColor, "background").replace("#","")
+
   try {
     const response = await fetch (
       "https://www.thecolorapi.com/scheme?hex=" + bgColor + "&mode=complement"
